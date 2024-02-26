@@ -1041,7 +1041,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
     Static [Int]$WindowLTColumn            = 1
     Static [Int]$WindowRBRow               = 5
     Static [Int]$WindowRBColumn            = 20
-    Static [String]$ChevronCharacterActual = '>'
+    Static [String]$ChevronCharacterActual = "`u{25B7}"
     Static [String]$ChevronBlankActual     = ' '
     Static [String]$LineBlankActual        = '                  '
     Static [String]$OptionALabel           = 'Scene'
