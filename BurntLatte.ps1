@@ -1191,4 +1191,5 @@ Class ProgramCore {
 }
 
 Clear-Host
+Write-Host "$([ATControlSequences]::CursorHide)"
 $Script:TheProgram.Run()
