@@ -1010,16 +1010,18 @@ $Script:StateBlockTable = @{
 }
 
 Class WindowBase {
-    Static [Int]$BorderDrawColorTop     = 0
-    Static [Int]$BorderDrawColorBottom  = 1
-    Static [Int]$BorderDrawColorLeft    = 2
-    Static [Int]$BorderDrawColorRight   = 3
-    Static [Int]$BorderStringHorizontal = 0
-    Static [Int]$BorderStringVertical   = 1
-    Static [Int]$BorderDirtyTop         = 0
-    Static [Int]$BorderDirtyBottom      = 1
-    Static [Int]$BorderDirtyLeft        = 2
-    Static [Int]$BorderDirtyRight       = 3
+    Static [Int]$BorderDrawColorTop    = 0
+    Static [Int]$BorderDrawColorBottom = 1
+    Static [Int]$BorderDrawColorLeft   = 2
+    Static [Int]$BorderDrawColorRight  = 3
+    Static [Int]$BorderDirtyTop        = 0
+    Static [Int]$BorderDirtyBottom     = 1
+    Static [Int]$BorderDirtyLeft       = 2
+    Static [Int]$BorderDirtyRight      = 3
+    Static [Int]$BorderStringTop       = 0
+    Static [Int]$BorderStringBottom    = 1
+    Static [Int]$BorderStringLeft      = 2
+    Static [Int]$BorderStringRight     = 3
 
     [ATCoordinates]$LeftTop
     [ATCoordinates]$RightBottom
@@ -1039,6 +1041,8 @@ Class WindowBase {
             [CCBlack24]::new()
         )
         $this.BorderStrings = [String[]](
+            '',
+            '',
             '',
             ''
         )
@@ -1078,7 +1082,7 @@ Class WindowBase {
                     ForegroundColor = $this.BorderDrawColors[[WindowBase]::BorderDrawColorTop]
                     Coordinates     = $this.LeftTop
                 }
-                UserData = "$($this.BorderStrings[[WindowBase]::BorderStringHorizontal])"
+                UserData = "$($this.BorderStrings[[WindowBase]::BorderStringTop])"
             }
             $this.BorderDrawDirty[[WindowBase]::BorderDirtyTop] = $false
         }
@@ -1091,7 +1095,7 @@ Class WindowBase {
                         Column = $this.LeftTop.Column
                     }
                 }
-                UserData = "$($this.BorderStrings[[WindowBase]::BorderStringHorizontal])"
+                UserData = "$($this.BorderStrings[[WindowBase]::BorderStringBottom])"
             }
             $this.BorderDrawDirty[[WindowBase]::BorderDirtyBottom] = $false
         }
@@ -1113,7 +1117,7 @@ Class WindowBase {
                                 Row    = ($this.LeftTop.Row + 1) + $a
                                 Column = $this.LeftTop.Column
                             }
-                            $temp += "$($this.BorderStrings[[WindowBase]::BorderStringVertical])$($b.ToAnsiControlSequenceString())"
+                            $temp += "$($this.BorderStrings[[WindowBase]::BorderStringLeft])$($b.ToAnsiControlSequenceString())"
                         }
 
                         Return $temp
@@ -1140,7 +1144,7 @@ Class WindowBase {
                                 Row    = ($this.LeftTop.Row + 1) + $a
                                 Column = $this.RightBottom.Column + 1
                             }
-                            $temp += "$($this.BorderStrings[[WindowBase]::BorderStringVertical])$($b.ToAnsiControlSequenceString())"
+                            $temp += "$($this.BorderStrings[[WindowBase]::BorderStringRight])$($b.ToAnsiControlSequenceString())"
                         }
 
                         Return $temp
@@ -1174,8 +1178,10 @@ Class CanvasTypeSelectionWindow : WindowBase {
     Static [String]$LineBlankActual        = '                  '
     Static [String]$OptionALabel           = 'Scene'
     Static [String]$OptionBLabel           = 'Enemy'
-    Static [String]$WindowBorderHorizontal = "`u{2767}-------------------`u{2619}"
-    Static [String]$WindowBorderVertical   = "`u{23A8}"
+    Static [String]$WindowBorderTopStr     = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
+    Static [String]$WindowBorderBottomStr  = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
+    Static [String]$WindowBorderLeftStr    = "`u{23A8}"
+    Static [String]$WindowBorderRightStr   = "`u{23AC}"
 
     Static [ATString]$LineBlank = [ATString]@{
         Prefix = [ATStringPrefix]@{
@@ -1225,8 +1231,10 @@ Class CanvasTypeSelectionWindow : WindowBase {
             [CCWhite24]::new()
         )
         $this.BorderStrings = [String[]](
-            [CanvasTypeSelectionWindow]::WindowBorderHorizontal,
-            [CanvasTypeSelectionWindow]::WindowBorderVertical
+            [CanvasTypeSelectionWindow]::WindowBorderTopStr,
+            [CanvasTypeSelectionWindow]::WindowBorderBottomStr,
+            [CanvasTypeSelectionWindow]::WindowBorderLeftStr,
+            [CanvasTypeSelectionWindow]::WindowBorderRightStr
         )
         $this.UpdateDimensions()
         $this.Initialize()
