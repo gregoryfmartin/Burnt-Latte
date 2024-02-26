@@ -1174,8 +1174,8 @@ Class CanvasTypeSelectionWindow : WindowBase {
     Static [String]$LineBlankActual        = '                  '
     Static [String]$OptionALabel           = 'Scene'
     Static [String]$OptionBLabel           = 'Enemy'
-    Static [String]$WindowBorderHorizontal = "`u{0095}------------------`u{0095}"
-    Static [String]$WindowBorderVertical   = '|'
+    Static [String]$WindowBorderHorizontal = "`u{2767}-------------------`u{2619}"
+    Static [String]$WindowBorderVertical   = "`u{23A8}"
 
     Static [ATString]$LineBlank = [ATString]@{
         Prefix = [ATStringPrefix]@{
