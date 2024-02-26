@@ -1,0 +1,1 @@
+Burnt Latte is a PowerShell console program that eases the creation of Scene Images for my game program, Eldoria. The primary goal is to be able to create these images with an appropriate aspect ratio that factors in Cells rather than Pixels.
