@@ -848,36 +848,6 @@ Class ATStringComposite {
     }
 }
 
-[Boolean]                  $Script:UseSfx              = $true
-[ProgramState]             $Script:GlobalState         = [ProgramState]::CanvasTypeSelection
-[ProgramCore]              $Script:TheProgram          = [ProgramCore]::new()
-[CanvasTypeSelectionWindow]$Script:TheCanvasTypeWindow = $null
-
-$Script:Rui             = $(Get-Host).UI.RawUI
-$Script:StateBlockTable = @{
-    [ProgramState]::CanvasTypeSelection = {
-        If ($null -EQ $Script:TheCanvasTypeWindow) {
-            Try {
-                $Script:TheCanvasTypeWindow = [CanvasTypeSelectionWindow]::new()
-            } Catch {
-                Write-Host $_
-                Exit
-            }
-        }
-
-        $Script:TheCanvasTypeWindow.Draw()
-
-        # TEST CODE
-        $Script:Rui.CursorPosition = ([ATCoordinatesDefault]::new()).ToAutomationCoordinates()
-
-        # $Script:TheCanvasTypeWindow.HandleInput()
-    }
-
-    [ProgramState]::ColorSelection = {}
-
-    [ProgramState]::CanvasPaint = {}
-}
-
 Class WindowBase {
     Static [Int]$BorderDrawColorTop    = 0
     Static [Int]$BorderDrawColorBottom = 1
@@ -1041,7 +1011,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
     Static [Int]$WindowLTColumn            = 1
     Static [Int]$WindowRBRow               = 5
     Static [Int]$WindowRBColumn            = 20
-    Static [String]$ChevronCharacterActual = "`u{25B7}"
+    Static [String]$ChevronCharacterActual = "`u{2937}"
     Static [String]$ChevronBlankActual     = ' '
     Static [String]$LineBlankActual        = '                  '
     Static [String]$OptionALabelBlank      = '     '
@@ -1094,8 +1064,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
         UseATReset = $true
     }
 
-    [Boolean]$ChevronADirty
-    [Boolean]$ChevronBDirty
+    [Boolean]$ChevronDirty
     [Boolean]$OptionALabelDirty
     [Boolean]$OptionBLabelDirty
     [List[ValueTuple[[ATString], [Boolean]]]]$ChevronList
@@ -1130,8 +1099,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
     }
 
     [Void]Initialize() {
-        $this.ChevronADirty               = $true
-        $this.ChevronBDirty               = $false
+        $this.ChevronDirty                = $true
         $this.OptionALabelDirty           = $true
         $this.OptionBLabelDirty           = $true
         $this.OptionALabelDrawCoordinates = [ATCoordinates]@{
@@ -1155,7 +1123,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
             [ValueTuple]::Create(
                 [ATString]@{
                     Prefix = [ATStringPrefix]@{
-                        ForegroundColor = [CCAppleNGreenALight24]::new()
+                        ForegroundColor = [CCAppleNOrangeALight24]::new()
                         Decorations     = [ATDecoration]@{
                             Bold  = $true
                             Blink = $true
@@ -1165,6 +1133,8 @@ Class CanvasTypeSelectionWindow : WindowBase {
                             Column = $this.OptionALabelDrawCoordinates.Column - 2
                         }
                     }
+                    UserData   = [CanvasTypeSelectionWindow]::ChevronCharacterActual
+                    UseATReset = $true
                 },
                 $true
             )
@@ -1173,7 +1143,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
             [ValueTuple]::Create(
                 [ATString]@{
                     Prefix = [ATStringPrefix]@{
-                        ForegroundColor = [CCAppleNGreenALight24]::new()
+                        ForegroundColor = [CCAppleNOrangeALight24]::new()
                         Decorations     = [ATDecoration]@{
                             Bold  = $true
                             Blink = $true
@@ -1183,6 +1153,8 @@ Class CanvasTypeSelectionWindow : WindowBase {
                             Column = $this.OptionBLabelDrawCoordinates.Column - 2
                         }
                     }
+                    UserData   = [CanvasTypeSelectionWindow]::ChevronBlankActual
+                    UseATReset = $true
                 },
                 $false
             )
@@ -1204,6 +1176,12 @@ Class CanvasTypeSelectionWindow : WindowBase {
             Write-Host "$([CanvasTypeSelectionWindow]::OptionBBlankActual.ToAnsiControlSequenceString())$([CanvasTypeSelectionWindow]::OptionBActual.ToAnsiControlSequenceString())"
             $this.OptionBLabelDirty = $false
         }
+        If($this.ChevronDirty -EQ $true) {
+            Foreach($c in $this.ChevronList) {
+                Write-Host "$($c.Item1.ToAnsiControlSequenceString())"
+                $this.ChevronDirty = $false
+            }
+        }
     }
 }
 
@@ -1224,6 +1202,36 @@ Class ProgramCore {
         Invoke-Command $Script:StateBlockTable[$Script:GlobalState]
         $Script:Rui.FlushInputBuffer()
     }
+}
+
+[Boolean]                  $Script:UseSfx              = $true
+[ProgramState]             $Script:GlobalState         = [ProgramState]::CanvasTypeSelection
+[ProgramCore]              $Script:TheProgram          = [ProgramCore]::new()
+[CanvasTypeSelectionWindow]$Script:TheCanvasTypeWindow = $null
+
+$Script:Rui             = $(Get-Host).UI.RawUI
+$Script:StateBlockTable = @{
+    [ProgramState]::CanvasTypeSelection = {
+        If ($null -EQ $Script:TheCanvasTypeWindow) {
+            Try {
+                $Script:TheCanvasTypeWindow = [CanvasTypeSelectionWindow]::new()
+            } Catch {
+                Write-Host $_
+                Exit
+            }
+        }
+
+        $Script:TheCanvasTypeWindow.Draw()
+
+        # TEST CODE
+        $Script:Rui.CursorPosition = ([ATCoordinatesDefault]::new()).ToAutomationCoordinates()
+
+        # $Script:TheCanvasTypeWindow.HandleInput()
+    }
+
+    [ProgramState]::ColorSelection = {}
+
+    [ProgramState]::CanvasPaint = {}
 }
 
 Clear-Host
