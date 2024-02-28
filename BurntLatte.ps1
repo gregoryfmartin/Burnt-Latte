@@ -1011,7 +1011,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
     Static [Int]$WindowLTColumn            = 1
     Static [Int]$WindowRBRow               = 5
     Static [Int]$WindowRBColumn            = 20
-    Static [String]$ChevronCharacterActual = "`u{2937}"
+    Static [String]$ChevronCharacterActual = "`u{2B9E}"
     Static [String]$ChevronBlankActual     = ' '
     Static [String]$LineBlankActual        = '                  '
     Static [String]$OptionALabelBlank      = '     '
@@ -1071,7 +1071,6 @@ Class CanvasTypeSelectionWindow : WindowBase {
     [Int]$ActiveChevronIndex
     [ATCoordinates]$OptionALabelDrawCoordinates
     [ATCoordinates]$OptionBLabelDrawCoordinates
-    [ATStringComposite]$LineComposite
 
     CanvasTypeSelectionWindow() : base() {
         $this.LeftTop = [ATCoordinates]@{
@@ -1099,6 +1098,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
     }
 
     [Void]Initialize() {
+        $this.ActiveChevronIndex          = 0
         $this.ChevronDirty                = $true
         $this.OptionALabelDirty           = $true
         $this.OptionBLabelDirty           = $true
@@ -1161,10 +1161,6 @@ Class CanvasTypeSelectionWindow : WindowBase {
         )
     }
 
-    [Void]CreateTextLine() {
-        $this.LineComposite = [ATStringComposite]::new()
-    }
-
     [Void]Draw() {
         ([WindowBase]$this).Draw()
 
@@ -1180,6 +1176,64 @@ Class CanvasTypeSelectionWindow : WindowBase {
             Foreach($c in $this.ChevronList) {
                 Write-Host "$($c.Item1.ToAnsiControlSequenceString())"
                 $this.ChevronDirty = $false
+            }
+        }
+    }
+
+    [Void]HandleInput() {
+        $keyCap = $Script:Rui.ReadKey('IncludeKeyDown, NoEcho')
+        Switch($keyCap.VirtualKeyCode) {
+            39 {
+                # Right
+                $this.ChevronList[$this.ActiveChevronIndex].Item2                 = $false
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData        = [CanvasTypeSelectionWindow]::ChevronBlankActual
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations     = [ATDecorationNone]::new()
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCTextDefault24]::new()
+
+                If(($this.ActiveChevronIndex + 1) -GT ($this.ChevronList.Count - 1)) {
+                    $this.ActiveChevronIndex = 0
+                } Else {
+                    $this.ActiveChevronIndex++
+                }
+
+                $this.ChevronList[$this.ActiveChevronIndex].Item2 = $true
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData = [CanvasTypeSelectionWindow]::ChevronCharacterActual
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations = [ATDecoration]@{
+                    Blink = $true
+                    Bold = $true
+                }
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCAppleNOrangeALight24]::new()
+
+                $this.ChevronDirty = $true
+            }
+
+            37 {
+                # Left
+                $this.ChevronList[$this.ActiveChevronIndex].Item2                 = $false
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData        = [CanvasTypeSelectionWindow]::ChevronBlankActual
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations     = [ATDecorationNone]::new()
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCTextDefault24]::new()
+
+                If(($this.ActiveChevronIndex - 1) -LT 0) {
+                    $this.ActiveChevronIndex = ($this.ChevronList.Count - 1)
+                } Else {
+                    $this.ActiveChevronIndex--
+                }
+
+                $this.ChevronList[$this.ActiveChevronIndex].Item2 = $true
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData = [CanvasTypeSelectionWindow]::ChevronCharacterActual
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations = [ATDecoration]@{
+                    Blink = $true
+                    Bold = $true
+                }
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCAppleNOrangeALight24]::new()
+
+                $this.ChevronDirty = $true
+            }
+
+            13 {
+                # Enter
+                # Change the state of the program
             }
         }
     }
@@ -1226,7 +1280,7 @@ $Script:StateBlockTable = @{
         # TEST CODE
         $Script:Rui.CursorPosition = ([ATCoordinatesDefault]::new()).ToAutomationCoordinates()
 
-        # $Script:TheCanvasTypeWindow.HandleInput()
+        $Script:TheCanvasTypeWindow.HandleInput()
     }
 
     [ProgramState]::ColorSelection = {}
