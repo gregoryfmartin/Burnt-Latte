@@ -1013,7 +1013,6 @@ Class CanvasTypeSelectionWindow : WindowBase {
     Static [Int]$WindowRBColumn            = 20
     Static [String]$ChevronCharacterActual = "`u{2B9E}"
     Static [String]$ChevronBlankActual     = ' '
-    Static [String]$LineBlankActual        = '                  '
     Static [String]$OptionALabelBlank      = '     '
     Static [String]$OptionBLabelBlank      = '     '
     Static [String]$OptionALabel           = 'Scene'
@@ -1023,14 +1022,6 @@ Class CanvasTypeSelectionWindow : WindowBase {
     Static [String]$WindowBorderLeftStr    = "`u{23A8}"
     Static [String]$WindowBorderRightStr   = "`u{23AC}"
 
-    Static [ATString]$LineBlank = [ATString]@{
-        Prefix = [ATStringPrefix]@{
-            BackgroundColor = [ATBackgroundColor24None]::new()
-            ForegroundColor = [ATForegroundColor24None]::new()
-        }
-        UserData   = [CanvasTypeSelectionWindow]::LineBlankActual
-        UseATReset = $true
-    }
     Static [ATString]$OptionAActual = [ATString]@{
         Prefix = [ATStringPrefix]@{
             BackgroundColor = [ATBackgroundColor24None]::new()
@@ -1110,8 +1101,8 @@ Class CanvasTypeSelectionWindow : WindowBase {
             Row    = 3
             Column = 13
         }
-        [CanvasTypeSelectionWindow]::OptionAActual.Prefix.Coordinates = $this.OptionALabelDrawCoordinates
-        [CanvasTypeSelectionWindow]::OptionBActual.Prefix.Coordinates = $this.OptionBLabelDrawCoordinates
+        [CanvasTypeSelectionWindow]::OptionAActual.Prefix.Coordinates      = $this.OptionALabelDrawCoordinates
+        [CanvasTypeSelectionWindow]::OptionBActual.Prefix.Coordinates      = $this.OptionBLabelDrawCoordinates
         [CanvasTypeSelectionWindow]::OptionABlankActual.Prefix.Coordinates = $this.OptionALabelDrawCoordinates
         [CanvasTypeSelectionWindow]::OptionBBlankActual.Prefix.Coordinates = $this.OptionBLabelDrawCoordinates
         $this.CreateChevrons()
@@ -1185,8 +1176,8 @@ Class CanvasTypeSelectionWindow : WindowBase {
         Switch($keyCap.VirtualKeyCode) {
             39 {
                 # Right
-                $this.ChevronList[$this.ActiveChevronIndex].Item2                 = $false
-                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData        = [CanvasTypeSelectionWindow]::ChevronBlankActual
+                $this.ChevronList[$this.ActiveChevronIndex].Item2                        = $false
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData               = [CanvasTypeSelectionWindow]::ChevronBlankActual
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations     = [ATDecorationNone]::new()
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCTextDefault24]::new()
 
@@ -1196,8 +1187,8 @@ Class CanvasTypeSelectionWindow : WindowBase {
                     $this.ActiveChevronIndex++
                 }
 
-                $this.ChevronList[$this.ActiveChevronIndex].Item2 = $true
-                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData = [CanvasTypeSelectionWindow]::ChevronCharacterActual
+                $this.ChevronList[$this.ActiveChevronIndex].Item2                    = $true
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData           = [CanvasTypeSelectionWindow]::ChevronCharacterActual
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations = [ATDecoration]@{
                     Blink = $true
                     Bold = $true
@@ -1209,8 +1200,8 @@ Class CanvasTypeSelectionWindow : WindowBase {
 
             37 {
                 # Left
-                $this.ChevronList[$this.ActiveChevronIndex].Item2                 = $false
-                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData        = [CanvasTypeSelectionWindow]::ChevronBlankActual
+                $this.ChevronList[$this.ActiveChevronIndex].Item2                        = $false
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData               = [CanvasTypeSelectionWindow]::ChevronBlankActual
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations     = [ATDecorationNone]::new()
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCTextDefault24]::new()
 
@@ -1220,8 +1211,8 @@ Class CanvasTypeSelectionWindow : WindowBase {
                     $this.ActiveChevronIndex--
                 }
 
-                $this.ChevronList[$this.ActiveChevronIndex].Item2 = $true
-                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData = [CanvasTypeSelectionWindow]::ChevronCharacterActual
+                $this.ChevronList[$this.ActiveChevronIndex].Item2                    = $true
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData           = [CanvasTypeSelectionWindow]::ChevronCharacterActual
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations = [ATDecoration]@{
                     Blink = $true
                     Bold = $true
