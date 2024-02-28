@@ -1044,6 +1044,8 @@ Class CanvasTypeSelectionWindow : WindowBase {
     Static [String]$ChevronCharacterActual = "`u{25B7}"
     Static [String]$ChevronBlankActual     = ' '
     Static [String]$LineBlankActual        = '                  '
+    Static [String]$OptionALabelBlank      = '     '
+    Static [String]$OptionBLabelBlank      = '     '
     Static [String]$OptionALabel           = 'Scene'
     Static [String]$OptionBLabel           = 'Enemy'
     Static [String]$WindowBorderTopStr     = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
@@ -1053,30 +1055,49 @@ Class CanvasTypeSelectionWindow : WindowBase {
 
     Static [ATString]$LineBlank = [ATString]@{
         Prefix = [ATStringPrefix]@{
-            BackgroundColor = [CCBlack24]::new()
-            ForegroundColor = [CCBlack24]::new()
+            BackgroundColor = [ATBackgroundColor24None]::new()
+            ForegroundColor = [ATForegroundColor24None]::new()
         }
         UserData   = [CanvasTypeSelectionWindow]::LineBlankActual
         UseATReset = $true
     }
     Static [ATString]$OptionAActual = [ATString]@{
         Prefix = [ATStringPrefix]@{
-            BackgroundColor = [CCBlack24]::new()
-            ForegroundColor = [CCBlack24]::new()
+            BackgroundColor = [ATBackgroundColor24None]::new()
+            ForegroundColor = [CCTextDefault24]::new()
         }
         UserData   = [CanvasTypeSelectionWindow]::OptionALabel
         UseATReset = $true
     }
     Static [ATString]$OptionBActual = [ATString]@{
         Prefix = [ATStringPrefix]@{
-            BackgroundColor = [CCBlack24]::new()
-            ForegroundColor = [CCBlack24]::new()
+            BackgroundColor = [ATBackgroundColor24None]::new()
+            ForegroundColor = [CCTextDefault24]::new()
         }
         UserData   = [CanvasTypeSelectionWindow]::OptionBLabel
         UseATReset = $true
     }
+    Static [ATString]$OptionABlankActual = [ATString]@{
+        Prefix = [ATStringPrefix]@{
+            BackgroundColor = [ATBackgroundColor24None]::new()
+            ForegroundColor = [CCTextDefault24]::new()
+        }
+        UserData   = [CanvasTypeSelectionWindow]::OptionALabelBlank
+        UseATReset = $true
+    }
+    Static [ATString]$OptionBBlankActual = [ATString]@{
+        Prefix = [ATStringPrefix]@{
+            BackgroundColor = [ATBackgroundColor24None]::new()
+            ForegroundColor = [CCTextDefault24]::new()
+        }
+        UserData   = [CanvasTypeSelectionWindow]::OptionBLabelBlank
+        UseATReset = $true
+    }
 
-    [Boolean]$LineDirty
+    [Boolean]$ChevronADirty
+    [Boolean]$ChevronBDirty
+    [Boolean]$OptionALabelDirty
+    [Boolean]$OptionBLabelDirty
     [List[ValueTuple[[ATString], [Boolean]]]]$ChevronList
     [Int]$ActiveChevronIndex
     [ATCoordinates]$OptionALabelDrawCoordinates
@@ -1109,16 +1130,22 @@ Class CanvasTypeSelectionWindow : WindowBase {
     }
 
     [Void]Initialize() {
-        $this.LineDirty                   = $true
-        $this.ActiveChevronIndex          = 0
+        $this.ChevronADirty               = $true
+        $this.ChevronBDirty               = $false
+        $this.OptionALabelDirty           = $true
+        $this.OptionBLabelDirty           = $true
         $this.OptionALabelDrawCoordinates = [ATCoordinates]@{
             Row    = 3
-            Column = 5
+            Column = 4
         }
         $this.OptionBLabelDrawCoordinates = [ATCoordinates]@{
             Row    = 3
-            Column = 14
+            Column = 13
         }
+        [CanvasTypeSelectionWindow]::OptionAActual.Prefix.Coordinates = $this.OptionALabelDrawCoordinates
+        [CanvasTypeSelectionWindow]::OptionBActual.Prefix.Coordinates = $this.OptionBLabelDrawCoordinates
+        [CanvasTypeSelectionWindow]::OptionABlankActual.Prefix.Coordinates = $this.OptionALabelDrawCoordinates
+        [CanvasTypeSelectionWindow]::OptionBBlankActual.Prefix.Coordinates = $this.OptionBLabelDrawCoordinates
         $this.CreateChevrons()
     }
 
@@ -1157,7 +1184,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
                         }
                     }
                 },
-                $true
+                $false
             )
         )
     }
@@ -1168,6 +1195,15 @@ Class CanvasTypeSelectionWindow : WindowBase {
 
     [Void]Draw() {
         ([WindowBase]$this).Draw()
+
+        If($this.OptionALabelDirty -EQ $true) {
+            Write-Host "$([CanvasTypeSelectionWindow]::OptionABlankActual.ToAnsiControlSequenceString())$([CanvasTypeSelectionWindow]::OptionAActual.ToAnsiControlSequenceString())"
+            $this.OptionALabelDirty = $false
+        }
+        If($this.OptionBLabelDirty -EQ $true) {
+            Write-Host "$([CanvasTypeSelectionWindow]::OptionBBlankActual.ToAnsiControlSequenceString())$([CanvasTypeSelectionWindow]::OptionBActual.ToAnsiControlSequenceString())"
+            $this.OptionBLabelDirty = $false
+        }
     }
 }
 
