@@ -7,6 +7,7 @@ using namespace System.Media
 Add-Type -AssemblyName PresentationCore
 
 Enum ProgramState {
+    InitialLoad
     CanvasTypeSelection
     ColorSelection
     CanvasPaint
@@ -1225,8 +1226,49 @@ Class CanvasTypeSelectionWindow : WindowBase {
             13 {
                 # Enter
                 # Change the state of the program
+                $Script:PreviousState = $Script:GlobalState
+                $Script:GlobalState   = [ProgramState]::ColorSelection
             }
         }
+    }
+}
+
+Class PaintbrushColorSelectionWindow : WindowBase {
+    Static [Int]$WindowLTRow              = 7
+    Static [Int]$WindowLTColumn           = 1
+    Static [Int]$WindowRBRow              = 15
+    Static [Int]$WindowRBColumn           = 21
+    Static [String]$WindowBorderTopStr    = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
+    Static [String]$WindowBorderBottomStr = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
+    Static [String]$WindowBorderLeftStr   = "`u{23A8}"
+    Static [String]$WindowBorderRightStr  = "`u{23AC}"
+
+    PaintbrushColorSelectionWindow() : base() {
+        $this.LeftTop = [ATCoordinates]@{
+            Row    = [PaintbrushColorSelectionWindow]::WindowLTRow
+            Column = [PaintbrushColorSelectionWindow]::WindowLTColumn
+        }
+        $this.RightBottom = [ATCoordinates]@{
+            Row    = [PaintbrushColorSelectionWindow]::WindowRBRow
+            Column = [PaintbrushColorSelectionWindow]::WindowRBColumn
+        }
+        $this.BorderDrawColors = [ConsoleColor24[]](
+            [CCWhite24]::new(),
+            [CCWhite24]::new(),
+            [CCWhite24]::new(),
+            [CCWhite24]::new()
+        )
+        $this.BorderStrings = [String[]](
+            [PaintbrushColorSelectionWindow]::WindowBorderTopStr,
+            [PaintbrushColorSelectionWindow]::WindowBorderBottomStr,
+            [PaintbrushColorSelectionWindow]::WindowBorderLeftStr,
+            [PaintbrushColorSelectionWindow]::WindowBorderRightStr
+        )
+        $this.UpdateDimensions()
+    }
+
+    [Void]Draw() {
+        ([WindowBase]$this).Draw()
     }
 }
 
@@ -1249,15 +1291,18 @@ Class ProgramCore {
     }
 }
 
-[Boolean]                  $Script:UseSfx              = $true
-[ProgramState]             $Script:GlobalState         = [ProgramState]::CanvasTypeSelection
-[ProgramCore]              $Script:TheProgram          = [ProgramCore]::new()
-[CanvasTypeSelectionWindow]$Script:TheCanvasTypeWindow = $null
+[Boolean]                       $Script:UseSfx              = $true
+[ProgramState]                  $Script:GlobalState         = [ProgramState]::InitialLoad
+[ProgramState]                  $Script:PreviousState       = $Script:GlobalState
+[ProgramCore]                   $Script:TheProgram          = [ProgramCore]::new()
+[CanvasTypeSelectionWindow]     $Script:TheCanvasTypeWindow = $null
+[PaintbrushColorSelectionWindow]$Script:ThePBCSWindow       = $null
+[ATBackgroundColor24]           $Script:PaintbrushColor     = [ATBackgroundColor24None]::new()
 
 $Script:Rui             = $(Get-Host).UI.RawUI
 $Script:StateBlockTable = @{
-    [ProgramState]::CanvasTypeSelection = {
-        If ($null -EQ $Script:TheCanvasTypeWindow) {
+    [ProgramState]::InitialLoad = {
+        If($null -EQ $Script:TheCanvasTypeWindow) {
             Try {
                 $Script:TheCanvasTypeWindow = [CanvasTypeSelectionWindow]::new()
             } Catch {
@@ -1265,7 +1310,19 @@ $Script:StateBlockTable = @{
                 Exit
             }
         }
+        If($null -EQ $Script:ThePBCSWindow) {
+            Try {
+                $Script:ThePBCSWindow = [PaintbrushColorSelectionWindow]::new()
+            } Catch {
+                Write-Host $_
+                Exit
+            }
+        }
+        $Script:PreviousState = $Script:GlobalState
+        $Script:GlobalState   = [ProgramState]::CanvasTypeSelection
+    }
 
+    [ProgramState]::CanvasTypeSelection = {
         $Script:TheCanvasTypeWindow.Draw()
 
         # TEST CODE
@@ -1274,7 +1331,12 @@ $Script:StateBlockTable = @{
         $Script:TheCanvasTypeWindow.HandleInput()
     }
 
-    [ProgramState]::ColorSelection = {}
+    [ProgramState]::ColorSelection = {
+        $Script:ThePBCSWindow.Draw()
+
+        # TEST CODE
+        $Script:Rui.CursorPosition = ([ATCoordinatesDefault]::new()).ToAutomationCoordinates()
+    }
 
     [ProgramState]::CanvasPaint = {}
 }
