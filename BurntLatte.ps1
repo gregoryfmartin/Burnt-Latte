@@ -835,7 +835,7 @@ Class ATStringComposite {
     [ATString[]]$CompositeActual
 
     ATStringComposite() {
-        $this.CompositeActual = [ATString[]]::new()
+        $this.CompositeActual = @()
     }
 
     [String]ToAnsiControlSequenceString() {
@@ -1238,10 +1238,22 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     Static [Int]$WindowLTColumn           = 1
     Static [Int]$WindowRBRow              = 15
     Static [Int]$WindowRBColumn           = 21
+    Static [Int]$RcgId                    = 0
+    Static [Int]$GcgId                    = 1
+    Static [Int]$BcgId                    = 2
     Static [String]$WindowBorderTopStr    = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
     Static [String]$WindowBorderBottomStr = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
     Static [String]$WindowBorderLeftStr   = "`u{23A8}"
     Static [String]$WindowBorderRightStr  = "`u{23AC}"
+
+    Static [ATStringComposite]$ColorHeader = $null
+    Static [ATStringComposite]$ColorGroup1 = $null
+    Static [ATStringComposite]$ColorGroup2 = $null
+
+    [Boolean]$ColorHeaderDirty     = $true
+    [Boolean]$RedColorGroupDirty   = $true
+    [Boolean]$GreenColorGroupDirty = $true
+    [Boolean]$BlueColorGroupDirty  = $true
 
     PaintbrushColorSelectionWindow() : base() {
         $this.LeftTop = [ATCoordinates]@{
@@ -1265,10 +1277,172 @@ Class PaintbrushColorSelectionWindow : WindowBase {
             [PaintbrushColorSelectionWindow]::WindowBorderRightStr
         )
         $this.UpdateDimensions()
+        $this.Initialize()
+    }
+
+    [Void]Initialize() {
+        [PaintbrushColorSelectionWindow]::ColorHeader = [ATStringComposite]::new()
+        [PaintbrushColorSelectionWindow]::ColorGroup1 = [ATStringComposite]::new()
+        [PaintbrushColorSelectionWindow]::ColorGroup2 = [ATStringComposite]::new()
+        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual = [ATString[]](
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [CCAppleNRedLight24]::new()
+                    Coordinates     = [ATCoordinates]@{
+                        Row    = 9
+                        Column = 5
+                    }
+                }
+                UserData   = 'R'
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [CCAppleNGreenLight24]::new()
+                    Coordinates     = [ATCoordinates]@{
+                        Row    = 9
+                        Column = 11
+                    }
+                }
+                UserData   = 'G'
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [CCAppleNBlueLight24]::new()
+                    Coordinates     = [ATCoordinates]@{
+                        Row    = 9
+                        Column = 17
+                    }
+                }
+                UserData   = 'B'
+                UseATReset = $true
+            }
+        )
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual = [ATString[]](
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    BackgroundColor = [ConsoleColor24]@{
+                        Red = $Script:PaintbrushColor.Red
+                    }
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 12
+                        Column = 4
+                    }
+                }
+                UserData   = '   '
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    BackgroundColor = [ConsoleColor24]@{
+                        Green = $Script:PaintbrushColor.Green
+                    }
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 12
+                        Column = 10
+                    }
+                }
+                UserData   = '   '
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    BackgroundColor = [ConsoleColor24]@{
+                        Blue = $Script:PaintbrushColor.Blue
+                    }
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 12
+                        Column = 16
+                    }
+                }
+                UserData   = '   '
+                UseATReset = $true
+            }
+        )
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual = [ATString[]](
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    BackgroundColor = [ConsoleColor24]@{
+                        Red = $Script:PaintbrushColor.Red
+                    }
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 13
+                        Column = 4
+                    }
+                }
+                UserData   = '   '
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    BackgroundColor = [ConsoleColor24]@{
+                        Green = $Script:PaintbrushColor.Green
+                    }
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 13
+                        Column = 10
+                    }
+                }
+                UserData   = '   '
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    BackgroundColor = [ConsoleColor24]@{
+                        Blue = $Script:PaintbrushColor.Blue
+                    }
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 13
+                        Column = 16
+                    }
+                }
+                UserData   = '   '
+                UseATReset = $true
+            }
+        )
+    }
+
+    [Void]UpdateRedColorGroup() {
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.BackgroundColor.Color.Red = $Script:PaintbrushColor.Red
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.BackgroundColor.Color.Red = $Script:PaintbrushColor.Red
+    }
+
+    [Void]UpdateGreenColorGroup() {
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.BackgroundColor.Color.Green = $Script:PaintbrushColor.Green
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.BackgroundColor.Color.Green = $Script:PaintbrushColor.Green
+    }
+
+    [Void]UpdateBlueColorGroup() {
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.BackgroundColor.Color.Blue = $Script:PaintbrushColor.Blue
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.BackgroundColor.Color.Blue = $Script:PaintbrushColor.Blue
     }
 
     [Void]Draw() {
         ([WindowBase]$this).Draw()
+
+        If($this.ColorHeaderDirty -EQ $true) {
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorHeader.ToAnsiControlSequenceString())"
+            $this.ColorHeaderDirty = $false
+        }
+        If($this.RedColorGroupDirty -EQ $true) {
+            $this.UpdateRedColorGroup()
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].ToAnsiControlSequenceString())"
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].ToAnsiControlSequenceString())"
+            $this.RedColorGroupDirty = $false
+        }
+        If($this.GreenColorGroupDirty -EQ $true) {
+            $this.UpdateGreenColorGroup()
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].ToAnsiControlSequenceString())"
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].ToAnsiControlSequenceString())"
+            $this.GreenColorGroupDirty = $false
+        }
+        If($this.BlueColorGroupDirty -EQ $true) {
+            $this.UpdateBlueColorGroup()
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].ToAnsiControlSequenceString())"
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].ToAnsiControlSequenceString())"
+            $this.BlueColorGroupDirty = $false
+        }
     }
 }
 
@@ -1297,7 +1471,11 @@ Class ProgramCore {
 [ProgramCore]                   $Script:TheProgram          = [ProgramCore]::new()
 [CanvasTypeSelectionWindow]     $Script:TheCanvasTypeWindow = $null
 [PaintbrushColorSelectionWindow]$Script:ThePBCSWindow       = $null
-[ATBackgroundColor24]           $Script:PaintbrushColor     = [ATBackgroundColor24None]::new()
+[ConsoleColor24]                $Script:PaintbrushColor     = [ConsoleColor24]@{
+    Red   = 255
+    Green = 255
+    Blue  = 255
+}
 
 $Script:Rui             = $(Get-Host).UI.RawUI
 $Script:StateBlockTable = @{
