@@ -1115,7 +1115,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
             [ValueTuple]::Create(
                 [ATString]@{
                     Prefix = [ATStringPrefix]@{
-                        ForegroundColor = [CCAppleNOrangeALight24]::new()
+                        ForegroundColor = [CCAppleNOrangeLight24]::new()
                         Decorations     = [ATDecoration]@{
                             Bold  = $true
                             Blink = $true
@@ -1135,7 +1135,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
             [ValueTuple]::Create(
                 [ATString]@{
                     Prefix = [ATStringPrefix]@{
-                        ForegroundColor = [CCAppleNOrangeALight24]::new()
+                        ForegroundColor = [CCAppleNOrangeLight24]::new()
                         Decorations     = [ATDecoration]@{
                             Bold  = $true
                             Blink = $true
@@ -1194,7 +1194,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
                     Blink = $true
                     Bold = $true
                 }
-                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCAppleNOrangeALight24]::new()
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCAppleNOrangeLight24]::new()
 
                 $this.ChevronDirty = $true
             }
@@ -1218,7 +1218,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
                     Blink = $true
                     Bold = $true
                 }
-                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCAppleNOrangeALight24]::new()
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCAppleNOrangeLight24]::new()
 
                 $this.ChevronDirty = $true
             }
@@ -1241,19 +1241,34 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     Static [Int]$RcgId                    = 0
     Static [Int]$GcgId                    = 1
     Static [Int]$BcgId                    = 2
+    Static [Int]$RlaId                    = 0
+    Static [Int]$RraId                    = 1
+    Static [Int]$GlaId                    = 2
+    Static [Int]$GraId                    = 3
+    Static [Int]$BlaId                    = 4
+    Static [Int]$BraId                    = 5
     Static [String]$WindowBorderTopStr    = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
     Static [String]$WindowBorderBottomStr = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
     Static [String]$WindowBorderLeftStr   = "`u{23A8}"
     Static [String]$WindowBorderRightStr  = "`u{23AC}"
+    Static [String]$ColorDialLeftArrow    = "`u{23F4}"
+    Static [String]$ColorDialRightArrow   = "`u{23F5}"
 
-    Static [ATStringComposite]$ColorHeader = $null
-    Static [ATStringComposite]$ColorGroup1 = $null
-    Static [ATStringComposite]$ColorGroup2 = $null
+    Static [ATStringComposite]$ColorHeader         = $null
+    Static [ATStringComposite]$ColorGroup1         = $null
+    Static [ATStringComposite]$ColorGroup2         = $null
+    Static [ATStringComposite]$ColorDialArrowGroup = $null
 
     [Boolean]$ColorHeaderDirty     = $true
     [Boolean]$RedColorGroupDirty   = $true
     [Boolean]$GreenColorGroupDirty = $true
     [Boolean]$BlueColorGroupDirty  = $true
+    [Boolean]$RraDirty             = $true
+    [Boolean]$RlaDirty             = $true
+    [Boolean]$GraDirty             = $true
+    [Boolean]$GlaDirty             = $true
+    [Boolean]$BraDirty             = $true
+    [Boolean]$BlaDirty             = $true
 
     PaintbrushColorSelectionWindow() : base() {
         $this.LeftTop = [ATCoordinates]@{
@@ -1281,9 +1296,11 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     }
 
     [Void]Initialize() {
-        [PaintbrushColorSelectionWindow]::ColorHeader = [ATStringComposite]::new()
-        [PaintbrushColorSelectionWindow]::ColorGroup1 = [ATStringComposite]::new()
-        [PaintbrushColorSelectionWindow]::ColorGroup2 = [ATStringComposite]::new()
+        [PaintbrushColorSelectionWindow]::ColorHeader         = [ATStringComposite]::new()
+        [PaintbrushColorSelectionWindow]::ColorGroup1         = [ATStringComposite]::new()
+        [PaintbrushColorSelectionWindow]::ColorGroup2         = [ATStringComposite]::new()
+        [PaintbrushColorSelectionWindow]::ColorDialArrowGroup = [ATStringComposite]::new()
+
         [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual = [ATString[]](
             [ATString]@{
                 Prefix = [ATStringPrefix]@{
@@ -1401,6 +1418,74 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 UseATReset = $true
             }
         )
+        [PaintbrushColorSelectionWindow]::ColorDialArrowGroup.CompositeActual = [ATString[]](
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [CCAppleNOrangeDark24]::new()
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 10
+                        Column = 3
+                    }
+                }
+                UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialLeftArrow)"
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [CCAppleNOrangeDark24]::new()
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 10
+                        Column = 7
+                    }
+                }
+                UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialRightArrow)"
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [CCAppleNOrangeDark24]::new()
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 10
+                        Column = 9
+                    }
+                }
+                UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialLeftArrow)"
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [CCAppleNOrangeDark24]::new()
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 10
+                        Column = 13
+                    }
+                }
+                UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialRightArrow)"
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [CCAppleNOrangeDark24]::new()
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 10
+                        Column = 15
+                    }
+                }
+                UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialLeftArrow)"
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [CCAppleNOrangeDark24]::new()
+                    Coordinates = [ATCoordinates]@{
+                        Row    = 10
+                        Column = 19
+                    }
+                }
+                UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialRightArrow)"
+                UseATReset = $true
+            }
+        )
     }
 
     [Void]UpdateRedColorGroup() {
@@ -1442,6 +1527,30 @@ Class PaintbrushColorSelectionWindow : WindowBase {
             Write-Host "$([PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].ToAnsiControlSequenceString())"
             Write-Host "$([PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].ToAnsiControlSequenceString())"
             $this.BlueColorGroupDirty = $false
+        }
+        If($this.RraDirty -EQ $true) {
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorDialArrowGroup.CompositeActual[[PaintbrushColorSelectionWindow]::RraId].ToAnsiControlSequenceString())"
+            $this.RraDirty = $false
+        }
+        If($this.RlaDirty -EQ $true) {
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorDialArrowGroup.CompositeActual[[PaintbrushColorSelectionWindow]::RlaId].ToAnsiControlSequenceString())"
+            $this.RlaDirty = $false
+        }
+        If($this.GraDirty -EQ $true) {
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorDialArrowGroup.CompositeActual[[PaintbrushColorSelectionWindow]::GraId].ToAnsiControlSequenceString())"
+            $this.GraDirty = $false
+        }
+        If($this.GlaDirty -EQ $true) {
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorDialArrowGroup.CompositeActual[[PaintbrushColorSelectionWindow]::GlaId].ToAnsiControlSequenceString())"
+            $this.GlaDirty = $false
+        }
+        If($this.BraDirty -EQ $true) {
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorDialArrowGroup.CompositeActual[[PaintbrushColorSelectionWindow]::BraId].ToAnsiControlSequenceString())"
+            $this.BraDirty = $false
+        }
+        If($this.BlaDirty -EQ $true) {
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorDialArrowGroup.CompositeActual[[PaintbrushColorSelectionWindow]::BlaId].ToAnsiControlSequenceString())"
+            $this.BlaDirty = $false
         }
     }
 }
