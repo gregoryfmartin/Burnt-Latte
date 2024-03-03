@@ -1225,6 +1225,13 @@ Class CanvasTypeSelectionWindow : WindowBase {
 
             13 {
                 # Enter
+
+                # Remove the blink status from the active chevron
+                # This would need replaced when the program re-enters the state from later
+                $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations.Blink = $false
+                $this.ChevronDirty = $true
+                $this.Draw() # Manually force a redraw since Draw won't get called in time before the state transition
+
                 # Change the state of the program
                 $Script:PreviousState = $Script:GlobalState
                 $Script:GlobalState   = [ProgramState]::ColorSelection
