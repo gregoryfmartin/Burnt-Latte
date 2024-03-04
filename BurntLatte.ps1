@@ -1521,6 +1521,32 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 }
                 UserData   = "{0:d3}" -F $Script:PaintbrushColor.Red
                 UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [ConsoleColor24]@{
+                        Green = $Script:PaintbrushColor.Green
+                    }
+                    Coordinates = [ATCoordinates]@{
+                        Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
+                        Column = [PaintbrushColorSelectionWindow]::GhdCol - 1
+                    }
+                }
+                UserData   = "{0:d3}" -F $Script:PaintbrushColor.Green
+                UseATReset = $true
+            },
+            [ATString]@{
+                Prefix = [ATStringPrefix]@{
+                    ForegroundColor = [ConsoleColor24]@{
+                        Blue = $Script:PaintbrushColor.Blue
+                    }
+                    Coordinates = [ATCoordinates]@{
+                        Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
+                        Column = [PaintbrushColorSelectionWindow]::BhdCol - 1
+                    }
+                }
+                UserData   = "{0:d3}" -F $Script:PaintbrushColor.Blue
+                UseATReset = $true
             }
         )
     }
@@ -1592,6 +1618,14 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         If($this.RvalDirty -EQ $true) {
             Write-Host "$([PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].ToAnsiControlSequenceString())"
             $this.RvalDirty = $false
+        }
+        If($this.GvalDirty -EQ $true) {
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].ToAnsiControlSequenceString())"
+            $this.GvalDirty = $false
+        }
+        If($this.BvalDirty -EQ $true) {
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].ToAnsiControlSequenceString())"
+            $this.BvalDirty = $false
         }
     }
 }
