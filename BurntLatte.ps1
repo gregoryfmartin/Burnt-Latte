@@ -1657,7 +1657,7 @@ Class ProgramCore {
 [PaintbrushColorSelectionWindow]$Script:ThePBCSWindow       = $null
 [ConsoleColor24]                $Script:PaintbrushColor     = [ConsoleColor24]@{
     Red   = 255
-    Green = 255
+    Green = 12
     Blue  = 255
 }
 
