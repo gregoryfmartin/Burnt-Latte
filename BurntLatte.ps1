@@ -1254,6 +1254,13 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     Static [Int]$GraId                    = 3
     Static [Int]$BlaId                    = 4
     Static [Int]$BraId                    = 5
+    Static [Int]$RhdCol                   = 5
+    Static [Int]$GhdCol                   = 11
+    Static [Int]$BhdCol                   = 17
+    Static [Int]$ColorHeaderRow           = 9
+    Static [Int]$ColorGroupRow1           = 12
+    Static [Int]$ColorGroupRow2           = 13
+    Static [Int]$ColorDialArrowRow        = 10
     Static [String]$WindowBorderTopStr    = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
     Static [String]$WindowBorderBottomStr = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
     Static [String]$WindowBorderLeftStr   = "`u{23A8}"
@@ -1276,6 +1283,9 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     [Boolean]$GlaDirty             = $true
     [Boolean]$BraDirty             = $true
     [Boolean]$BlaDirty             = $true
+    [Boolean]$RvalDirty            = $true
+    [Boolean]$BvalDirty            = $true
+    [Boolean]$GvalDirty            = $true
 
     PaintbrushColorSelectionWindow() : base() {
         $this.LeftTop = [ATCoordinates]@{
@@ -1313,8 +1323,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 Prefix = [ATStringPrefix]@{
                     ForegroundColor = [CCAppleNRedLight24]::new()
                     Coordinates     = [ATCoordinates]@{
-                        Row    = 9
-                        Column = 5
+                        Row    = [PaintbrushColorSelectionWindow]::ColorHeaderRow
+                        Column = [PaintbrushColorSelectionWindow]::RhdCol
                     }
                 }
                 UserData   = 'R'
@@ -1324,8 +1334,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 Prefix = [ATStringPrefix]@{
                     ForegroundColor = [CCAppleNGreenLight24]::new()
                     Coordinates     = [ATCoordinates]@{
-                        Row    = 9
-                        Column = 11
+                        Row    = [PaintbrushColorSelectionWindow]::ColorHeaderRow
+                        Column = [PaintbrushColorSelectionWindow]::GhdCol
                     }
                 }
                 UserData   = 'G'
@@ -1335,8 +1345,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 Prefix = [ATStringPrefix]@{
                     ForegroundColor = [CCAppleNBlueLight24]::new()
                     Coordinates     = [ATCoordinates]@{
-                        Row    = 9
-                        Column = 17
+                        Row    = [PaintbrushColorSelectionWindow]::ColorHeaderRow
+                        Column = [PaintbrushColorSelectionWindow]::BhdCol
                     }
                 }
                 UserData   = 'B'
@@ -1350,8 +1360,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Red = $Script:PaintbrushColor.Red
                     }
                     Coordinates = [ATCoordinates]@{
-                        Row    = 12
-                        Column = 4
+                        Row    = [PaintbrushColorSelectionWindow]::ColorGroupRow1
+                        Column = [PaintbrushColorSelectionWindow]::RhdCol - 1
                     }
                 }
                 UserData   = '   '
@@ -1363,8 +1373,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Green = $Script:PaintbrushColor.Green
                     }
                     Coordinates = [ATCoordinates]@{
-                        Row    = 12
-                        Column = 10
+                        Row    = [PaintbrushColorSelectionWindow]::ColorGroupRow1
+                        Column = [PaintbrushColorSelectionWindow]::GhdCol - 1
                     }
                 }
                 UserData   = '   '
@@ -1376,8 +1386,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Blue = $Script:PaintbrushColor.Blue
                     }
                     Coordinates = [ATCoordinates]@{
-                        Row    = 12
-                        Column = 16
+                        Row    = [PaintbrushColorSelectionWindow]::ColorGroupRow1
+                        Column = [PaintbrushColorSelectionWindow]::BhdCol - 1
                     }
                 }
                 UserData   = '   '
@@ -1391,7 +1401,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Red = $Script:PaintbrushColor.Red
                     }
                     Coordinates = [ATCoordinates]@{
-                        Row    = 13
+                        Row    = [PaintbrushColorSelectionWindow]::ColorGroupRow2
                         Column = 4
                     }
                 }
@@ -1404,7 +1414,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Green = $Script:PaintbrushColor.Green
                     }
                     Coordinates = [ATCoordinates]@{
-                        Row    = 13
+                        Row    = [PaintbrushColorSelectionWindow]::ColorGroupRow2
                         Column = 10
                     }
                 }
@@ -1417,7 +1427,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Blue = $Script:PaintbrushColor.Blue
                     }
                     Coordinates = [ATCoordinates]@{
-                        Row    = 13
+                        Row    = [PaintbrushColorSelectionWindow]::ColorGroupRow2
                         Column = 16
                     }
                 }
@@ -1430,8 +1440,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 Prefix = [ATStringPrefix]@{
                     ForegroundColor = [CCAppleNOrangeDark24]::new()
                     Coordinates = [ATCoordinates]@{
-                        Row    = 10
-                        Column = 3
+                        Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
+                        Column = [PaintbrushColorSelectionWindow]::RhdCol - 2
                     }
                 }
                 UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialLeftArrow)"
@@ -1441,8 +1451,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 Prefix = [ATStringPrefix]@{
                     ForegroundColor = [CCAppleNOrangeDark24]::new()
                     Coordinates = [ATCoordinates]@{
-                        Row    = 10
-                        Column = 7
+                        Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
+                        Column = [PaintbrushColorSelectionWindow]::RhdCol + 2
                     }
                 }
                 UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialRightArrow)"
@@ -1452,8 +1462,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 Prefix = [ATStringPrefix]@{
                     ForegroundColor = [CCAppleNOrangeDark24]::new()
                     Coordinates = [ATCoordinates]@{
-                        Row    = 10
-                        Column = 9
+                        Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
+                        Column = [PaintbrushColorSelectionWindow]::GhdCol - 2
                     }
                 }
                 UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialLeftArrow)"
@@ -1463,8 +1473,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 Prefix = [ATStringPrefix]@{
                     ForegroundColor = [CCAppleNOrangeDark24]::new()
                     Coordinates = [ATCoordinates]@{
-                        Row    = 10
-                        Column = 13
+                        Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
+                        Column = [PaintbrushColorSelectionWindow]::GhdCol + 2
                     }
                 }
                 UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialRightArrow)"
@@ -1474,8 +1484,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 Prefix = [ATStringPrefix]@{
                     ForegroundColor = [CCAppleNOrangeDark24]::new()
                     Coordinates = [ATCoordinates]@{
-                        Row    = 10
-                        Column = 15
+                        Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
+                        Column = [PaintbrushColorSelectionWindow]::BhdCol - 2
                     }
                 }
                 UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialLeftArrow)"
@@ -1485,8 +1495,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 Prefix = [ATStringPrefix]@{
                     ForegroundColor = [CCAppleNOrangeDark24]::new()
                     Coordinates = [ATCoordinates]@{
-                        Row    = 10
-                        Column = 19
+                        Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
+                        Column = [PaintbrushColorSelectionWindow]::BhdCol + 2
                     }
                 }
                 UserData   = "$([PaintbrushColorSelectionWindow]::ColorDialRightArrow)"
