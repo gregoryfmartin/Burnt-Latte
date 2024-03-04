@@ -1267,6 +1267,9 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     Static [String]$WindowBorderRightStr  = "`u{23AC}"
     Static [String]$ColorDialLeftArrow    = "`u{23F4}"
     Static [String]$ColorDialRightArrow   = "`u{23F5}"
+    Static [String]$RhdTitle              = 'R'
+    Static [String]$GhdTitle              = 'G'
+    Static [String]$BhdTitle              = 'B'
 
     Static [ATStringComposite]$ColorHeader         = $null
     Static [ATStringComposite]$ColorGroup1         = $null
@@ -1327,7 +1330,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Column = [PaintbrushColorSelectionWindow]::RhdCol
                     }
                 }
-                UserData   = 'R'
+                UserData   = [PaintbrushColorSelectionWindow]::RhdTitle
                 UseATReset = $true
             },
             [ATString]@{
@@ -1338,7 +1341,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Column = [PaintbrushColorSelectionWindow]::GhdCol
                     }
                 }
-                UserData   = 'G'
+                UserData   = [PaintbrushColorSelectionWindow]::GhdTitle
                 UseATReset = $true
             },
             [ATString]@{
@@ -1349,7 +1352,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Column = [PaintbrushColorSelectionWindow]::BhdCol
                     }
                 }
-                UserData   = 'B'
+                UserData   = [PaintbrushColorSelectionWindow]::BhdTitle
                 UseATReset = $true
             }
         )
