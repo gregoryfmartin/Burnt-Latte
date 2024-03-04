@@ -13,6 +13,13 @@ Enum ProgramState {
     CanvasPaint
 }
 
+Enum PbscwState {
+    ChannelRedSelect
+    ChannelGreenSelect
+    ChannelBlueSelect
+    None
+}
+
 Class ConsoleColor24 {
     [ValidateRange(0, 255)][Int]$Red
     [ValidateRange(0, 255)][Int]$Green
@@ -1291,6 +1298,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     [Boolean]$BvalDirty            = $true
     [Boolean]$GvalDirty            = $true
 
+    [PbscwState]$State = [PbscwState]::None
+
     PaintbrushColorSelectionWindow() : base() {
         $this.LeftTop = [ATCoordinates]@{
             Row    = [PaintbrushColorSelectionWindow]::WindowLTRow
@@ -1549,6 +1558,13 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 UseATReset = $true
             }
         )
+        $this.State = [PbscwState]::ChannelRedSelect
+
+        # For the initial state, which is red
+        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink   = $true
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink   = $true
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink   = $true
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink = $true
     }
 
     [Void]UpdateRedColorGroup() {
@@ -1628,6 +1644,69 @@ Class PaintbrushColorSelectionWindow : WindowBase {
             $this.BvalDirty = $false
         }
     }
+
+    [Void]HandleInput() {
+        $keyCap = $Script:Rui.ReadKey('IncludeKeyDown, NoEcho')
+        Switch($keyCap.VirtualKeyCode) {
+            9 { # Tab - Cycles through the channel options in a specific direction
+                If($keyCap.ControlKeyState -LIKE "*shiftpressed*") {
+                    # THERE HAS TO BE A BETTER WAY TO DO THIS
+                    If($this.State -GT 0) {
+                        $this.State--
+                    } Else {
+                        $this.State = 2
+                    }
+                } Else {
+                    If($this.State -LT 3) {
+                        $this.State++
+                    } Else {
+                        $this.State = 0
+                    }
+                }
+
+                Switch($this.State) {
+                    ([PbscwState]::ChannelRedSelect) {
+                        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink   = $true
+                        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink   = $true
+                        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink   = $true
+                        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink = $true
+                        
+                        $this.ColorHeaderDirty   = $true
+                        $this.RedColorGroupDirty = $true
+                        $this.RvalDirty          = $true
+
+                        Break
+                    }
+
+                    ([PbscwState]::ChannelGreenSelect) {
+                        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations.Blink   = $true
+                        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations.Blink   = $true
+                        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations.Blink   = $true
+                        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations.Blink = $true
+                        
+                        $this.ColorHeaderDirty     = $true
+                        $this.GreenColorGroupDirty = $true
+                        $this.GvalDirty            = $true
+
+                        Break
+                    }
+
+                    ([PbscwState]::ChannelBlueSelect) {
+                        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations.Blink   = $true
+                        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations.Blink   = $true
+                        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations.Blink   = $true
+                        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations.Blink = $true
+                        
+                        $this.ColorHeaderDirty    = $true
+                        $this.BlueColorGroupDirty = $true
+                        $this.BvalDirty           = $true
+
+                        Break
+                    }
+                }
+            }
+        }
+    }
 }
 
 Class ProgramCore {
@@ -1698,6 +1777,8 @@ $Script:StateBlockTable = @{
 
         # TEST CODE
         $Script:Rui.CursorPosition = ([ATCoordinatesDefault]::new()).ToAutomationCoordinates()
+
+        $Script:ThePBCSWindow.HandleInput()
     }
 
     [ProgramState]::CanvasPaint = {}
