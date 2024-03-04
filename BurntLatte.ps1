@@ -1402,7 +1402,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                     }
                     Coordinates = [ATCoordinates]@{
                         Row    = [PaintbrushColorSelectionWindow]::ColorGroupRow2
-                        Column = 4
+                        Column = [PaintbrushColorSelectionWindow]::RhdCol - 1
                     }
                 }
                 UserData   = '   '
@@ -1415,7 +1415,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                     }
                     Coordinates = [ATCoordinates]@{
                         Row    = [PaintbrushColorSelectionWindow]::ColorGroupRow2
-                        Column = 10
+                        Column = [PaintbrushColorSelectionWindow]::GhdCol - 1
                     }
                 }
                 UserData   = '   '
@@ -1428,7 +1428,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                     }
                     Coordinates = [ATCoordinates]@{
                         Row    = [PaintbrushColorSelectionWindow]::ColorGroupRow2
-                        Column = 16
+                        Column = [PaintbrushColorSelectionWindow]::BhdCol - 1
                     }
                 }
                 UserData   = '   '
