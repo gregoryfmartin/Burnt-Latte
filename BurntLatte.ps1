@@ -1561,10 +1561,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         $this.State = [PbscwState]::ChannelRedSelect
 
         # For the initial state, which is red
-        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
-        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
-        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
-        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $true }
+        $this.EnableRedColorGroup()
     }
 
     [Void]UpdateRedColorGroup() {
@@ -1607,14 +1604,12 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         $this.DisableGreenColorGroup()
         $this.DisableBlueColorGroup()
 
-        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecorationNone]::new()
-        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecorationNone]::new()
-        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecorationNone]::new()
-        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations = [ATDecorationNone]::new()
+        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $true }
 
-        $this.ColorHeaderDirty   = $true
-        $this.RedColorGroupDirty = $true
-        $this.RvalDirty          = $true
+        $this.SetColorAreaDirty()
     }
 
     [Void]EnableGreenColorGroup() {
@@ -1626,9 +1621,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
         [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $true }
 
-        $this.ColorHeaderDirty     = $true
-        $this.GreenColorGroupDirty = $true
-        $this.GvalDirty            = $true
+        $this.SetColorAreaDirty()
     }
 
     [Void]EnableBlueColorGroup() {
@@ -1640,9 +1633,17 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
         [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $true }
 
-        $this.ColorHeaderDirty    = $true
-        $this.BlueColorGroupDirty = $true
-        $this.BvalDirty           = $true
+        $this.SetColorAreaDirty()
+    }
+
+    [Void]SetColorAreaDirty() {
+        $this.ColorHeaderDirty     = $true
+        $this.RedColorGroupDirty   = $true
+        $this.GreenColorGroupDirty = $true
+        $this.BlueColorGroupDirty  = $true
+        $this.RvalDirty            = $true
+        $this.GvalDirty            = $true
+        $this.BvalDirty            = $true
     }
 
     [Void]Draw() {
