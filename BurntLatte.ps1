@@ -1370,7 +1370,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual = [ATString[]](
             [ATString]@{
                 Prefix = [ATStringPrefix]@{
-                    BackgroundColor = [ConsoleColor24]@{
+                    ForegroundColor = [ConsoleColor24]@{
                         Red = $Script:PaintbrushColor.Red
                     }
                     Coordinates = [ATCoordinates]@{
@@ -1378,7 +1378,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Column = [PaintbrushColorSelectionWindow]::RhdCol - 1
                     }
                 }
-                UserData   = '   '
+                UserData   = "`u{2588}`u{2588}`u{2588}"
                 UseATReset = $true
             },
             [ATString]@{
@@ -1411,7 +1411,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual = [ATString[]](
             [ATString]@{
                 Prefix = [ATStringPrefix]@{
-                    BackgroundColor = [ConsoleColor24]@{
+                    ForegroundColor = [ConsoleColor24]@{
                         Red = $Script:PaintbrushColor.Red
                     }
                     Coordinates = [ATCoordinates]@{
@@ -1419,7 +1419,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Column = [PaintbrushColorSelectionWindow]::RhdCol - 1
                     }
                 }
-                UserData   = '   '
+                UserData   = "`u{2588}`u{2588}`u{2588}"
                 UseATReset = $true
             },
             [ATString]@{
@@ -1561,10 +1561,10 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         $this.State = [PbscwState]::ChannelRedSelect
 
         # For the initial state, which is red
-        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink   = $true
-        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink   = $true
-        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink   = $true
-        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations.Blink = $true
+        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $true }
     }
 
     [Void]UpdateRedColorGroup() {
