@@ -1721,7 +1721,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         $this.State = 2
                     }
                 } Else {
-                    If($this.State -LT 3) {
+                    If($this.State -LT 2) {
                         $this.State++
                     } Else {
                         $this.State = 0
