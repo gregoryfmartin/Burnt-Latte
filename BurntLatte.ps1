@@ -1564,19 +1564,31 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         $this.EnableRedColorGroup()
     }
 
+    [Void]UpdateRedColorDialData() {
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].UserData = "{0:d3}" -F $Script:PaintbrushColor.Red
+    }
+
+    [Void]UpdateGreenColorDialData() {
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].UserData = "{0:d3}" -F $Script:PaintbrushColor.Green
+    }
+
+    [Void]UpdateBlueColorDialData() {
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].UserData = "{0:d3}" -F $Script:PaintbrushColor.Blue
+    }
+
     [Void]UpdateRedColorGroup() {
-        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.BackgroundColor.Color.Red = $Script:PaintbrushColor.Red
-        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.BackgroundColor.Color.Red = $Script:PaintbrushColor.Red
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.ForegroundColor.Color.Red = $Script:PaintbrushColor.Red
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.ForegroundColor.Color.Red = $Script:PaintbrushColor.Red
     }
 
     [Void]UpdateGreenColorGroup() {
-        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.BackgroundColor.Color.Green = $Script:PaintbrushColor.Green
-        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.BackgroundColor.Color.Green = $Script:PaintbrushColor.Green
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.ForegroundColor.Color.Green = $Script:PaintbrushColor.Green
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.ForegroundColor.Color.Green = $Script:PaintbrushColor.Green
     }
 
     [Void]UpdateBlueColorGroup() {
-        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.BackgroundColor.Color.Blue = $Script:PaintbrushColor.Blue
-        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.BackgroundColor.Color.Blue = $Script:PaintbrushColor.Blue
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.ForegroundColor.Color.Blue = $Script:PaintbrushColor.Blue
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.ForegroundColor.Color.Blue = $Script:PaintbrushColor.Blue
     }
 
     [Void]DisableRedColorGroup() {
@@ -1644,6 +1656,21 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         $this.RvalDirty            = $true
         $this.GvalDirty            = $true
         $this.BvalDirty            = $true
+    }
+
+    [Void]SetRedColorAreaDirty() {
+        $this.RedColorGroupDirty = $true
+        $this.RvalDirty          = $true
+    }
+
+    [Void]SetGreenColorAreaDirty() {
+        $this.GreenColorGroupDirty = $true
+        $this.GvalDirty            = $true
+    }
+
+    [Void]SetBlueColorAreaDirty() {
+        $this.BlueColorGroupDirty = $true
+        $this.BvalDirty           = $true
     }
 
     [Void]Draw() {
@@ -1743,6 +1770,52 @@ Class PaintbrushColorSelectionWindow : WindowBase {
 
                     ([PbscwState]::ChannelBlueSelect) {
                         $this.EnableBlueColorGroup()
+
+                        Break
+                    }
+                }
+            }
+
+            37 { # Left Arrow - Decrement the value by 1; wrap to 255 if -1 is hit
+                Switch($this.State) {
+                    ([PbscwState]::ChannelRedSelect) {
+                        If($Script:PaintbrushColor.Red -GT 0) {
+                            $Script:PaintbrushColor.Red--
+                        } Else {
+                            $Script:PaintbrushColor.Red = 255
+                        }
+
+                        $this.UpdateRedColorDialData()
+                        $this.UpdateRedColorGroup()
+                        $this.SetRedColorAreaDirty()
+
+                        Break
+                    }
+
+                    ([PbscwState]::ChannelGreenSelect) {
+                        If($Script:PaintbrushColor.Green -GT 0) {
+                            $Script:PaintbrushColor.Green--
+                        } Else {
+                            $Script:PaintbrushColor.Green = 255
+                        }
+
+                        $this.UpdateGreenColorDialData()
+                        $this.UpdateGreenColorGroup()
+                        $this.SetGreenColorAreaDirty()
+
+                        Break
+                    }
+
+                    ([PbscwState]::ChannelBlueSelect) {
+                        If($Script:PaintbrushColor.Blue -GT 0) {
+                            $Script:PaintbrushColor.Blue--
+                        } Else {
+                            $Script:PaintbrushColor.Blue = 255
+                        }
+
+                        $this.UpdateBlueColorDialData()
+                        $this.UpdateBlueColorGroup()
+                        $this.SetBlueColorAreaDirty()
 
                         Break
                     }
