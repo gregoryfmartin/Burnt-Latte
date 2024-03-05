@@ -1250,7 +1250,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
 Class PaintbrushColorSelectionWindow : WindowBase {
     Static [Int]$WindowLTRow              = 7
     Static [Int]$WindowLTColumn           = 1
-    Static [Int]$WindowRBRow              = 15
+    Static [Int]$WindowRBRow              = 17
     Static [Int]$WindowRBColumn           = 21
     Static [Int]$RcgId                    = 0
     Static [Int]$GcgId                    = 1
