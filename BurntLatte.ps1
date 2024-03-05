@@ -1520,9 +1520,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual = [ATString[]](
             [ATString]@{
                 Prefix = [ATStringPrefix]@{
-                    ForegroundColor = [ConsoleColor24]@{
-                        Red = $Script:PaintbrushColor.Red
-                    }
+                    ForegroundColor = [CCTextDefault24]::new()
                     Coordinates = [ATCoordinates]@{
                         Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
                         Column = [PaintbrushColorSelectionWindow]::RhdCol - 1
@@ -1533,9 +1531,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
             },
             [ATString]@{
                 Prefix = [ATStringPrefix]@{
-                    ForegroundColor = [ConsoleColor24]@{
-                        Green = $Script:PaintbrushColor.Green
-                    }
+                    ForegroundColor = [CCTextDefault24]::new()
                     Coordinates = [ATCoordinates]@{
                         Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
                         Column = [PaintbrushColorSelectionWindow]::GhdCol - 1
@@ -1546,9 +1542,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
             },
             [ATString]@{
                 Prefix = [ATStringPrefix]@{
-                    ForegroundColor = [ConsoleColor24]@{
-                        Blue = $Script:PaintbrushColor.Blue
-                    }
+                    ForegroundColor = [CCTextDefault24]::new()
                     Coordinates = [ATCoordinates]@{
                         Row    = [PaintbrushColorSelectionWindow]::ColorDialArrowRow
                         Column = [PaintbrushColorSelectionWindow]::BhdCol - 1
