@@ -1866,7 +1866,6 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Break
                     }
                 }
-
             }
         }
     }
