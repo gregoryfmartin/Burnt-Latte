@@ -1383,7 +1383,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
             },
             [ATString]@{
                 Prefix = [ATStringPrefix]@{
-                    BackgroundColor = [ConsoleColor24]@{
+                    ForegroundColor = [ConsoleColor24]@{
                         Green = $Script:PaintbrushColor.Green
                     }
                     Coordinates = [ATCoordinates]@{
@@ -1391,12 +1391,12 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Column = [PaintbrushColorSelectionWindow]::GhdCol - 1
                     }
                 }
-                UserData   = '   '
+                UserData   = "`u{2588}`u{2588}`u{2588}"
                 UseATReset = $true
             },
             [ATString]@{
                 Prefix = [ATStringPrefix]@{
-                    BackgroundColor = [ConsoleColor24]@{
+                    ForegroundColor = [ConsoleColor24]@{
                         Blue = $Script:PaintbrushColor.Blue
                     }
                     Coordinates = [ATCoordinates]@{
@@ -1404,7 +1404,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Column = [PaintbrushColorSelectionWindow]::BhdCol - 1
                     }
                 }
-                UserData   = '   '
+                UserData   = "`u{2588}`u{2588}`u{2588}"
                 UseATReset = $true
             }
         )
@@ -1424,7 +1424,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
             },
             [ATString]@{
                 Prefix = [ATStringPrefix]@{
-                    BackgroundColor = [ConsoleColor24]@{
+                    ForegroundColor = [ConsoleColor24]@{
                         Green = $Script:PaintbrushColor.Green
                     }
                     Coordinates = [ATCoordinates]@{
@@ -1432,12 +1432,12 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Column = [PaintbrushColorSelectionWindow]::GhdCol - 1
                     }
                 }
-                UserData   = '   '
+                UserData   = "`u{2588}`u{2588}`u{2588}"
                 UseATReset = $true
             },
             [ATString]@{
                 Prefix = [ATStringPrefix]@{
-                    BackgroundColor = [ConsoleColor24]@{
+                    ForegroundColor = [ConsoleColor24]@{
                         Blue = $Script:PaintbrushColor.Blue
                     }
                     Coordinates = [ATCoordinates]@{
@@ -1445,7 +1445,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Column = [PaintbrushColorSelectionWindow]::BhdCol - 1
                     }
                 }
-                UserData   = '   '
+                UserData   = "`u{2588}`u{2588}`u{2588}"
                 UseATReset = $true
             }
         )
@@ -1580,6 +1580,57 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     [Void]UpdateBlueColorGroup() {
         [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.BackgroundColor.Color.Blue = $Script:PaintbrushColor.Blue
         [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.BackgroundColor.Color.Blue = $Script:PaintbrushColor.Blue
+    }
+
+    [Void]DisableRedColorGroup() {
+        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $false }
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $false }
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $false }
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $false }
+    }
+
+    [Void]DisableGreenColorGroup() {
+        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $false }
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $false }
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $false }
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $false }
+    }
+
+    [Void]DisableBlueColorGroup() {
+        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $false }
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $false }
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $false }
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $false }
+    }
+
+    [Void]EnableRedColorGroup() {
+        $this.DisableGreenColorGroup()
+        $this.DisableBlueColorGroup()
+
+        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::RcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $true }
+    }
+
+    [Void]EnableGreenColorGroup() {
+        $this.DisableRedColorGroup()
+        $this.DisableBlueColorGroup()
+
+        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::GcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $true }
+    }
+
+    [Void]EnableBlueColorGroup() {
+        $this.DisableRedColorGroup()
+        $this.DisableGreenColorGroup()
+
+        [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorGroup1.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorGroup2.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations   = [ATDecoration]@{ Blink = $true }
+        [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].Prefix.Decorations = [ATDecoration]@{ Blink = $true }
     }
 
     [Void]Draw() {
