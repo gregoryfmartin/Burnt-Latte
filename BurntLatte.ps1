@@ -1821,6 +1821,53 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                     }
                 }
             }
+
+            39 { # Right Arrow - Increment the value by 1; wrap to 0 if 255 is hit
+                Switch($this.State) {
+                    ([PbscwState]::ChannelRedSelect) {
+                        If($Script:PaintbrushColor.Red -LT 255) {
+                            $Script:PaintbrushColor.Red++
+                        } Else {
+                            $Script:PaintbrushColor.Red = 0
+                        }
+
+                        $this.UpdateRedColorDialData()
+                        $this.UpdateRedColorGroup()
+                        $this.SetRedColorAreaDirty()
+
+                        Break
+                    }
+
+                    ([PbscwState]::ChannelGreenSelect) {
+                        If($Script:PaintbrushColor.Green -LT 255) {
+                            $Script:PaintbrushColor.Green++
+                        } Else {
+                            $Script:PaintbrushColor.Green = 0
+                        }
+
+                        $this.UpdateGreenColorDialData()
+                        $this.UpdateGreenColorGroup()
+                        $this.SetGreenColorAreaDirty()
+
+                        Break
+                    }
+
+                    ([PbscwState]::ChannelBlueSelect) {
+                        If($Script:PaintbrushColor.Blue -LT 255) {
+                            $Script:PaintbrushColor.Blue++
+                        } Else {
+                            $Script:PaintbrushColor.Blue = 0
+                        }
+
+                        $this.UpdateBlueColorDialData()
+                        $this.UpdateBlueColorGroup()
+                        $this.SetBlueColorAreaDirty()
+
+                        Break
+                    }
+                }
+
+            }
         }
     }
 }
