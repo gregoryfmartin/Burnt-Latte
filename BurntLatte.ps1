@@ -20,6 +20,12 @@ Enum PbscwState {
     None
 }
 
+Enum CanvasType {
+    Enemy
+    Scene
+    None
+}
+
 Class ConsoleColor24 {
     [ValidateRange(0, 255)][Int]$Red
     [ValidateRange(0, 255)][Int]$Green
@@ -1239,6 +1245,13 @@ Class CanvasTypeSelectionWindow : WindowBase {
                 $this.ChevronDirty = $true
                 $this.Draw() # Manually force a redraw since Draw won't get called in time before the state transition
 
+                # Capture the Active Chevron and set the CanvasType according to it
+                If($this.ActiveChevronIndex -EQ 0) {
+                    $Script:TheCanvasType = [CanvasType]::Scene
+                } Elseif($this.ActiveChevronIndex -EQ 1) {
+                    $Script:TheCanvasType = [CanvasType]::Enemy
+                }
+
                 # Change the state of the program
                 $Script:PreviousState = $Script:GlobalState
                 $Script:GlobalState   = [ProgramState]::ColorSelection
@@ -1893,6 +1906,39 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     }
 }
 
+class CanvasWindow : WindowBase {
+    Static [Int]$WindowLTRow              = 1
+    Static [Int]$WindowLTColumn           = 23
+    Static [Int]$WindowRBRow              = 0
+    Static [Int]$WindowRBColumn           = 0
+    Static [String]$WindowBorderTopStr    = ''
+    Static [String]$WindowBorderBottomStr = ''
+    Static [String]$WindowBorderLeftStr   = ''
+    Static [String]$WindowBorderRightStr  = ''
+
+    CanvasWindow() : base() {
+        Switch($Script:TheCanvasType) {
+            ([CanvasType]::Scene) {
+                # Scenes are 18x48 Cells
+                [CanvasWindow]::WindowRBRow    = [CanvasWindow]::WindowLTRow + 18
+                [CanvasWindow]::WindowRBColumn = [CanvasWindow]::WindowLTColumn + 48
+            }
+
+            ([CanvasType]::Enemy) {
+                # Enemy Images are 15x37 Cells
+                [CanvasWindow]::WindowRBRow    = [CanvasWindow]::WindowLTRow + 15
+                [CanvasWindow]::WindowRBColumn = [CanvasWindow]::WindowLTColumn + 37
+            }
+
+            Default {
+                # This will default to Scene Type
+                [CanvasWindow]::WindowRBRow    = [CanvasWindow]::WindowLTRow + 18
+                [CanvasWindow]::WindowRBColumn = [CanvasWindow]::WindowLTColumn + 48
+            }
+        }
+    }
+}
+
 Class ProgramCore {
     [Boolean]$Running
     
@@ -1918,6 +1964,7 @@ Class ProgramCore {
 [ProgramCore]                   $Script:TheProgram          = [ProgramCore]::new()
 [CanvasTypeSelectionWindow]     $Script:TheCanvasTypeWindow = $null
 [PaintbrushColorSelectionWindow]$Script:ThePBCSWindow       = $null
+[CanvasType]                    $Script:TheCanvasType       = [CanvasType]::None
 [ConsoleColor24]                $Script:PaintbrushColor     = [ConsoleColor24]@{
     Red   = 255
     Green = 5
