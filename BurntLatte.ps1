@@ -1252,6 +1252,9 @@ Class CanvasTypeSelectionWindow : WindowBase {
                     $Script:TheCanvasType = [CanvasType]::Enemy
                 }
 
+                # Recreate the border of the Canvas Window
+                $Script:TheCanvasWindow.CreateWindowBorder()
+
                 # Change the state of the program
                 $Script:PreviousState = $Script:GlobalState
                 $Script:GlobalState   = [ProgramState]::ColorSelection
@@ -1908,15 +1911,52 @@ Class PaintbrushColorSelectionWindow : WindowBase {
 
 class CanvasWindow : WindowBase {
     Static [Int]$WindowLTRow              = 1
-    Static [Int]$WindowLTColumn           = 23
+    Static [Int]$WindowLTColumn           = 25
     Static [Int]$WindowRBRow              = 0
     Static [Int]$WindowRBColumn           = 0
     Static [String]$WindowBorderTopStr    = ''
     Static [String]$WindowBorderBottomStr = ''
-    Static [String]$WindowBorderLeftStr   = ''
-    Static [String]$WindowBorderRightStr  = ''
+    Static [String]$WindowBorderLeftStr   = "`u{23A8}"
+    Static [String]$WindowBorderRightStr  = "`u{23AC}"
 
     CanvasWindow() : base() {
+        $this.CreateWindowBorder()
+        $this.LeftTop = [ATCoordinates]@{
+            Row    = [CanvasWindow]::WindowLTRow
+            Column = [CanvasWindow]::WindowLTColumn
+        }
+        $this.RightBottom = [ATCoordinates]@{
+            Row    = [CanvasWindow]::WindowRBRow
+            Column = [CanvasWindow]::WindowRBColumn
+        }
+        $this.BorderDrawColors = [ConsoleColor24[]](
+            [CCWhite24]::new(),
+            [CCWhite24]::new(),
+            [CCWhite24]::new(),
+            [CCWhite24]::new()
+        )
+        # This window presents a special case, therefore this call is abstracted away from its usual place here.
+        # $this.BorderStrings = [String[]](
+        #     [CanvasWindow]::WindowBorderTopStr,
+        #     [CanvasWindow]::WindowBorderBottomStr,
+        #     [CanvasWindow]::WindowBorderLeftStr,
+        #     [CanvasWindow]::WindowBorderRightStr
+        # )
+        # This window presents a special case, therefore this call is abstracted away from its usual place here.
+        # $this.UpdateDimensions()
+        $this.Initialize()
+    }
+
+    [Void]Draw() {
+        ([WindowBase]$this).Draw()
+    }
+
+    [Void]Initialize() {}
+
+    [Void]CreateWindowBorder() {
+        # Beacuse the dimensions of this window can vary, and because it can regen on the fly,
+        # the horizontal border will need to be dynamically created in much the same way as the
+        # verticals do.
         Switch($Script:TheCanvasType) {
             ([CanvasType]::Scene) {
                 # Scenes are 18x48 Cells
@@ -1936,6 +1976,24 @@ class CanvasWindow : WindowBase {
                 [CanvasWindow]::WindowRBColumn = [CanvasWindow]::WindowLTColumn + 48
             }
         }
+        $this.UpdateDimensions()
+        [CanvasWindow]::WindowBorderTopStr    = "`u{2767}"
+        [CanvasWindow]::WindowBorderBottomStr = "`u{2767}"
+
+        For($a = 0; $a -LT $this.Width; $a++) { # This portion could be problematic
+            [CanvasWindow]::WindowBorderTopStr    += "`u{2026}"
+            [CanvasWindow]::WindowBorderBottomStr += "`u{2026}"
+        }
+
+        [CanvasWindow]::WindowBorderTopStr    += "`u{2619}"
+        [CanvasWindow]::WindowBorderBottomStr += "`u{2619}"
+
+        $this.BorderStrings = [String[]](
+            [CanvasWindow]::WindowBorderTopStr,
+            [CanvasWindow]::WindowBorderBottomStr,
+            [CanvasWindow]::WindowBorderLeftStr,
+            [CanvasWindow]::WindowBorderRightStr
+        )
     }
 }
 
@@ -1964,6 +2022,7 @@ Class ProgramCore {
 [ProgramCore]                   $Script:TheProgram          = [ProgramCore]::new()
 [CanvasTypeSelectionWindow]     $Script:TheCanvasTypeWindow = $null
 [PaintbrushColorSelectionWindow]$Script:ThePBCSWindow       = $null
+[CanvasWindow]                  $Script:TheCanvasWindow     = $null
 [CanvasType]                    $Script:TheCanvasType       = [CanvasType]::None
 [ConsoleColor24]                $Script:PaintbrushColor     = [ConsoleColor24]@{
     Red   = 255
@@ -1990,6 +2049,14 @@ $Script:StateBlockTable = @{
                 Exit
             }
         }
+        If($null -EQ $Script:TheCanvasWindow) {
+            Try {
+                $Script:TheCanvasWindow = [CanvasWindow]::new()
+            } Catch {
+                Write-Host $_
+                Exit
+            }
+        }
         $Script:PreviousState = $Script:GlobalState
         $Script:GlobalState   = [ProgramState]::CanvasTypeSelection
     }
@@ -2005,6 +2072,7 @@ $Script:StateBlockTable = @{
 
     [ProgramState]::ColorSelection = {
         $Script:ThePBCSWindow.Draw()
+        $Script:TheCanvasWindow.Draw()
 
         # TEST CODE
         $Script:Rui.CursorPosition = ([ATCoordinatesDefault]::new()).ToAutomationCoordinates()
