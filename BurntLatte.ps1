@@ -1268,6 +1268,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     Static [Int]$ColorGroupRow1           = 12
     Static [Int]$ColorGroupRow2           = 13
     Static [Int]$ColorDialArrowRow        = 10
+    Static [Int]$ColorSumBarRow           = 15
+    Static [Int]$ColorSumBarCol           = 3
     Static [String]$WindowBorderTopStr    = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
     Static [String]$WindowBorderBottomStr = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
     Static [String]$WindowBorderLeftStr   = "`u{23A8}"
@@ -1283,6 +1285,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     Static [ATStringComposite]$ColorGroup2         = $null
     Static [ATStringComposite]$ColorDialArrowGroup = $null
     Static [ATStringComposite]$ColorDialData       = $null
+    Static [ATString]$ColorSumBar                  = $null
 
     [Boolean]$ColorHeaderDirty     = $true
     [Boolean]$RedColorGroupDirty   = $true
@@ -1297,6 +1300,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     [Boolean]$RvalDirty            = $true
     [Boolean]$BvalDirty            = $true
     [Boolean]$GvalDirty            = $true
+    [Boolean]$ColSumBarDirty       = $true
 
     [PbscwState]$State = [PbscwState]::None
 
@@ -1331,6 +1335,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         [PaintbrushColorSelectionWindow]::ColorGroup2         = [ATStringComposite]::new()
         [PaintbrushColorSelectionWindow]::ColorDialArrowGroup = [ATStringComposite]::new()
         [PaintbrushColorSelectionWindow]::ColorDialData       = [ATStringComposite]::new()
+        [PaintbrushColorSelectionWindow]::ColorSumBar         = [ATString]::new()
 
         [PaintbrushColorSelectionWindow]::ColorHeader.CompositeActual = [ATString[]](
             [ATString]@{
@@ -1552,8 +1557,19 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 UseATReset = $true
             }
         )
-        $this.State = [PbscwState]::ChannelRedSelect
+        [PaintbrushColorSelectionWindow]::ColorSumBar = [ATString]@{
+            Prefix = [ATStringPrefix]@{
+                ForegroundColor = $Script:PaintbrushColor
+                Coordinates = [ATCoordinates]@{
+                    Row    = [PaintbrushColorSelectionWindow]::ColorSumBarRow
+                    Column = [PaintbrushColorSelectionWindow]::ColorSumBarCol
+                }
+            }
+            UserData   = "`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}`u{2588}"
+            UseATReset = $true
+        }
 
+        $this.State = [PbscwState]::ChannelRedSelect
         # For the initial state, which is red
         $this.EnableRedColorGroup()
     }
@@ -1568,6 +1584,10 @@ Class PaintbrushColorSelectionWindow : WindowBase {
 
     [Void]UpdateBlueColorDialData() {
         [PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].UserData = "{0:d3}" -F $Script:PaintbrushColor.Blue
+    }
+
+    [Void]UpdateColSumBarColor() {
+        [PaintbrushColorSelectionWindow]::ColorSumBar.Prefix.ForegroundColor = $Script:PaintbrushColor
     }
 
     [Void]UpdateRedColorGroup() {
@@ -1728,6 +1748,10 @@ Class PaintbrushColorSelectionWindow : WindowBase {
             Write-Host "$([PaintbrushColorSelectionWindow]::ColorDialData.CompositeActual[[PaintbrushColorSelectionWindow]::BcgId].ToAnsiControlSequenceString())"
             $this.BvalDirty = $false
         }
+        If($this.ColSumBarDirty -EQ $true) {
+            Write-Host "$([PaintbrushColorSelectionWindow]::ColorSumBar.ToAnsiControlSequenceString())"
+            $this.ColSumBarDirty = $false
+        }
     }
 
     [Void]HandleInput() {
@@ -1814,6 +1838,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Break
                     }
                 }
+                [PaintbrushColorSelectionWindow]::ColorSumBar.Prefix.ForegroundColor = $Script:PaintbrushColor
+                $this.ColSumBarDirty                                                 = $true
             }
 
             39 { # Right Arrow - Increment the value by 1; wrap to 0 if 255 is hit
@@ -1860,6 +1886,8 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                         Break
                     }
                 }
+                [PaintbrushColorSelectionWindow]::ColorSumBar.Prefix.ForegroundColor = $Script:PaintbrushColor
+                $this.ColSumBarDirty                                                 = $true
             }
         }
     }
