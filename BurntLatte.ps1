@@ -1921,14 +1921,15 @@ class CanvasWindow : WindowBase {
 
     CanvasWindow() : base() {
         $this.CreateWindowBorder()
-        $this.LeftTop = [ATCoordinates]@{
-            Row    = [CanvasWindow]::WindowLTRow
-            Column = [CanvasWindow]::WindowLTColumn
-        }
-        $this.RightBottom = [ATCoordinates]@{
-            Row    = [CanvasWindow]::WindowRBRow
-            Column = [CanvasWindow]::WindowRBColumn
-        }
+        # This window presents a special case, therefore this call is abstracted away from its usual place here.
+        # $this.LeftTop = [ATCoordinates]@{
+        #     Row    = [CanvasWindow]::WindowLTRow
+        #     Column = [CanvasWindow]::WindowLTColumn
+        # }
+        # $this.RightBottom = [ATCoordinates]@{
+        #     Row    = [CanvasWindow]::WindowRBRow
+        #     Column = [CanvasWindow]::WindowRBColumn
+        # }
         $this.BorderDrawColors = [ConsoleColor24[]](
             [CCWhite24]::new(),
             [CCWhite24]::new(),
@@ -1975,6 +1976,14 @@ class CanvasWindow : WindowBase {
                 [CanvasWindow]::WindowRBRow    = [CanvasWindow]::WindowLTRow + 18
                 [CanvasWindow]::WindowRBColumn = [CanvasWindow]::WindowLTColumn + 48
             }
+        }
+        $this.LeftTop = [ATCoordinates]@{
+            Row    = [CanvasWindow]::WindowLTRow
+            Column = [CanvasWindow]::WindowLTColumn
+        }
+        $this.RightBottom = [ATCoordinates]@{
+            Row    = [CanvasWindow]::WindowRBRow
+            Column = [CanvasWindow]::WindowRBColumn
         }
         $this.UpdateDimensions()
         [CanvasWindow]::WindowBorderTopStr    = "`u{2767}"
