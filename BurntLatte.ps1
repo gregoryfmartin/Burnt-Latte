@@ -1311,17 +1311,17 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     [Boolean]$GreenColorGroupDirty = $true
     [Boolean]$BlueColorGroupDirty  = $true
     [Boolean]$RraDirty             = $true
-    [Boolean]$RraActive = $false
+    [Boolean]$RraActive            = $false
     [Boolean]$RlaDirty             = $true
-    [Boolean]$RlaActive = $false
+    [Boolean]$RlaActive            = $false
     [Boolean]$GraDirty             = $true
-    [Boolean]$GraActive = $false
+    [Boolean]$GraActive            = $false
     [Boolean]$GlaDirty             = $true
-    [Boolean]$GlaActive = $false
+    [Boolean]$GlaActive            = $false
     [Boolean]$BraDirty             = $true
-    [Boolean]$BraActive = $false
+    [Boolean]$BraActive            = $false
     [Boolean]$BlaDirty             = $true
-    [Boolean]$BlaActive = $false
+    [Boolean]$BlaActive            = $false
     [Boolean]$RvalDirty            = $true
     [Boolean]$BvalDirty            = $true
     [Boolean]$GvalDirty            = $true
@@ -1810,18 +1810,6 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     }
 
     [Void]HandleInput() {
-        # $this.RlaActive = $false
-        # $this.RraActive = $false
-        # $this.GlaActive = $false
-        # $this.GraActive = $false
-        # $this.BlaActive = $false
-        # $this.BraActive = $false
-        # $this.RlaDirty  = $true
-        # $this.RraDirty  = $true
-        # $this.GlaDirty  = $true
-        # $this.GraDirty  = $true
-        # $this.BlaDirty  = $true
-        # $this.BraDirty  = $true
         $keyCap = $Script:Rui.ReadKey('IncludeKeyDown, IncludeKeyUp, NoEcho')
         Switch($keyCap.VirtualKeyCode) {
             9 { # Tab - Cycles through the channel options in a specific direction
@@ -1927,73 +1915,82 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                     $this.RlaActive = $false
                     $this.GlaActive = $false
                     $this.BlaActive = $false
-                    $this.RlaDirty = $true
-                    $this.GlaDirty = $true
-                    $this.BlaDirty = $true
+                    $this.RlaDirty  = $true
+                    $this.GlaDirty  = $true
+                    $this.BlaDirty  = $true
                 }
             }
 
             39 { # Right Arrow - Increment the value by 1; wrap to 0 if 255 is hit
-                Switch($this.State) {
-                    ([PbscwState]::ChannelRedSelect) {
-                        If($Script:PaintbrushColor.Red -LT 255) {
-                            $Script:PaintbrushColor.Red++
-                        } Else {
-                            $Script:PaintbrushColor.Red = 0
+                If($keyCap.KeyDown -EQ $true) {
+                    Switch($this.State) {
+                        ([PbscwState]::ChannelRedSelect) {
+                            If($Script:PaintbrushColor.Red -LT 255) {
+                                $Script:PaintbrushColor.Red++
+                            } Else {
+                                $Script:PaintbrushColor.Red = 0
+                            }
+    
+                            $this.UpdateRedColorDialData()
+                            $this.UpdateRedColorGroup()
+                            $this.SetRedColorAreaDirty()
+    
+                            If($this.RraActive -EQ $false) {
+                                $this.RraActive = $true
+                                $this.RraDirty  = $true
+                            }
+    
+                            Break
                         }
-
-                        $this.UpdateRedColorDialData()
-                        $this.UpdateRedColorGroup()
-                        $this.SetRedColorAreaDirty()
-
-                        If($this.RraActive -EQ $false) {
-                            $this.RraActive = $true
-                            $this.RraDirty  = $true
+    
+                        ([PbscwState]::ChannelGreenSelect) {
+                            If($Script:PaintbrushColor.Green -LT 255) {
+                                $Script:PaintbrushColor.Green++
+                            } Else {
+                                $Script:PaintbrushColor.Green = 0
+                            }
+    
+                            $this.UpdateGreenColorDialData()
+                            $this.UpdateGreenColorGroup()
+                            $this.SetGreenColorAreaDirty()
+    
+                            If($this.GraActive -EQ $false) {
+                                $this.GraActive = $true
+                                $this.GraDirty  = $true
+                            }
+    
+                            Break
                         }
-
-                        Break
+    
+                        ([PbscwState]::ChannelBlueSelect) {
+                            If($Script:PaintbrushColor.Blue -LT 255) {
+                                $Script:PaintbrushColor.Blue++
+                            } Else {
+                                $Script:PaintbrushColor.Blue = 0
+                            }
+    
+                            $this.UpdateBlueColorDialData()
+                            $this.UpdateBlueColorGroup()
+                            $this.SetBlueColorAreaDirty()
+    
+                            If($this.BraActive -EQ $false) {
+                                $this.BraActive = $true
+                                $this.BraDirty  = $true
+                            }
+    
+                            Break
+                        }
                     }
-
-                    ([PbscwState]::ChannelGreenSelect) {
-                        If($Script:PaintbrushColor.Green -LT 255) {
-                            $Script:PaintbrushColor.Green++
-                        } Else {
-                            $Script:PaintbrushColor.Green = 0
-                        }
-
-                        $this.UpdateGreenColorDialData()
-                        $this.UpdateGreenColorGroup()
-                        $this.SetGreenColorAreaDirty()
-
-                        If($this.GraActive -EQ $false) {
-                            $this.GraActive = $true
-                            $this.GraDirty  = $true
-                        }
-
-                        Break
-                    }
-
-                    ([PbscwState]::ChannelBlueSelect) {
-                        If($Script:PaintbrushColor.Blue -LT 255) {
-                            $Script:PaintbrushColor.Blue++
-                        } Else {
-                            $Script:PaintbrushColor.Blue = 0
-                        }
-
-                        $this.UpdateBlueColorDialData()
-                        $this.UpdateBlueColorGroup()
-                        $this.SetBlueColorAreaDirty()
-
-                        If($this.BraActive -EQ $false) {
-                            $this.BraActive = $true
-                            $this.BraDirty  = $true
-                        }
-
-                        Break
-                    }
+                    [PaintbrushColorSelectionWindow]::ColorSumBar.Prefix.ForegroundColor = $Script:PaintbrushColor
+                    $this.ColSumBarDirty                                                 = $true
+                } Else {
+                    $this.RraActive = $false
+                    $this.GraActive = $false
+                    $this.BlaActive = $false
+                    $this.RraDirty  = $true
+                    $this.GraDirty  = $true
+                    $this.BraDirty  = $true
                 }
-                [PaintbrushColorSelectionWindow]::ColorSumBar.Prefix.ForegroundColor = $Script:PaintbrushColor
-                $this.ColSumBarDirty                                                 = $true
             }
         }
     }
