@@ -1988,7 +1988,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 } Else {
                     $this.RraActive = $false
                     $this.GraActive = $false
-                    $this.BlaActive = $false
+                    $this.BraActive = $false
                     $this.RraDirty  = $true
                     $this.GraDirty  = $true
                     $this.BraDirty  = $true
