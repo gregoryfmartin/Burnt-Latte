@@ -1813,38 +1813,40 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         $keyCap = $Script:Rui.ReadKey('IncludeKeyDown, IncludeKeyUp, NoEcho')
         Switch($keyCap.VirtualKeyCode) {
             9 { # Tab - Cycles through the channel options in a specific direction
-                If($keyCap.ControlKeyState -LIKE "*shiftpressed*") {
-                    # THERE HAS TO BE A BETTER WAY TO DO THIS
-                    If($this.State -GT 0) {
-                        $this.State--
+                If($keyCap.KeyDown -EQ $true) {
+                    If($keyCap.ControlKeyState -LIKE "*shiftpressed*") {
+                        # THERE HAS TO BE A BETTER WAY TO DO THIS
+                        If($this.State -GT 0) {
+                            $this.State--
+                        } Else {
+                            $this.State = 2
+                        }
                     } Else {
-                        $this.State = 2
+                        If($this.State -LT 2) {
+                            $this.State++
+                        } Else {
+                            $this.State = 0
+                        }
                     }
-                } Else {
-                    If($this.State -LT 2) {
-                        $this.State++
-                    } Else {
-                        $this.State = 0
-                    }
-                }
-
-                Switch($this.State) {
-                    ([PbscwState]::ChannelRedSelect) {
-                        $this.EnableRedColorGroup()
-
-                        Break
-                    }
-
-                    ([PbscwState]::ChannelGreenSelect) {
-                        $this.EnableGreenColorGroup()
-
-                        Break
-                    }
-
-                    ([PbscwState]::ChannelBlueSelect) {
-                        $this.EnableBlueColorGroup()
-
-                        Break
+    
+                    Switch($this.State) {
+                        ([PbscwState]::ChannelRedSelect) {
+                            $this.EnableRedColorGroup()
+    
+                            Break
+                        }
+    
+                        ([PbscwState]::ChannelGreenSelect) {
+                            $this.EnableGreenColorGroup()
+    
+                            Break
+                        }
+    
+                        ([PbscwState]::ChannelBlueSelect) {
+                            $this.EnableBlueColorGroup()
+    
+                            Break
+                        }
                     }
                 }
             }
