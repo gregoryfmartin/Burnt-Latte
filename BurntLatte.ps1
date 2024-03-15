@@ -1814,8 +1814,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         Switch($keyCap.VirtualKeyCode) {
             9 { # Tab - Cycles through the channel options in a specific direction
                 If($keyCap.KeyDown -EQ $true) {
-                    If($keyCap.ControlKeyState -LIKE "*shiftpressed*") {
-                        # THERE HAS TO BE A BETTER WAY TO DO THIS
+                    If($keyCap.ControlKeyState -LIKE "*shiftpressed*") { # THERE HAS TO BE A BETTER WAY TO DO THIS
                         If($this.State -GT 0) {
                             $this.State--
                         } Else {
@@ -1828,23 +1827,23 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                             $this.State = 0
                         }
                     }
-    
+
                     Switch($this.State) {
                         ([PbscwState]::ChannelRedSelect) {
                             $this.EnableRedColorGroup()
-    
+
                             Break
                         }
-    
+
                         ([PbscwState]::ChannelGreenSelect) {
                             $this.EnableGreenColorGroup()
-    
+
                             Break
                         }
-    
+
                         ([PbscwState]::ChannelBlueSelect) {
                             $this.EnableBlueColorGroup()
-    
+
                             Break
                         }
                     }
@@ -1993,6 +1992,12 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                     $this.GraDirty  = $true
                     $this.BraDirty  = $true
                 }
+            }
+
+            27 { # Escape Key - Transition Core State back to Canvas Type Selection
+                # Let's just transition the state back at this point to see what happens
+                $Script:PreviousState = $Script:GlobalState
+                $Script:GlobalState   = [ProgramState]::CanvasTypeSelection
             }
         }
     }
