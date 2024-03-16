@@ -887,6 +887,7 @@ Class WindowBase {
     [String]$Title
     [Boolean]$UseTitle
     [Boolean]$TitleDirty
+    [ConsoleColor24]$TitleColor
 
     WindowBase() {
         $this.LeftTop          = [ATCoordinatesNone]::new()
@@ -912,6 +913,7 @@ Class WindowBase {
         $this.Title      = ''
         $this.UseTitle   = $false
         $this.TitleDirty = $false
+        $this.TitleColor = [CCTextDefault24]::new()
         $this.UpdateDimensions()
     }
 
@@ -930,6 +932,7 @@ Class WindowBase {
         $this.Title            = ''
         $this.UseTitle         = $false
         $this.TitleDirty       = $false
+        $this.TitleColor       = [CCTextDefault24]::new()
         $this.UpdateDimensions()
     }
 
@@ -1023,7 +1026,7 @@ Class WindowBase {
             If($this.TitleDirty -EQ $true) {
                 [ATString]$a = [ATString]@{
                     Prefix = [ATStringPrefix]@{
-                        ForegroundColor = [CCTextDefault24]::new()
+                        ForegroundColor = $this.TitleColor
                         Coordinates     = [ATCoordinates]@{
                             Row    = $this.LeftTop.Row
                             Column = $this.LeftTop.Column + 2
@@ -1045,11 +1048,13 @@ Class WindowBase {
     }
 
     [Void]SetupTitle(
-        [String]$Title
+        [String]$Title,
+        [ConsoleColor24]$Color
     ) {
         $this.UseTitle   = $true
         $this.TitleDirty = $true
         $this.Title      = $Title
+        $this.TitleColor = $Color
     }
 }
 
@@ -1138,7 +1143,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
         )
         $this.UpdateDimensions()
         $this.Initialize()
-        $this.SetupTitle([CanvasTypeSelectionWindow]::WindowTitle)
+        $this.SetupTitle([CanvasTypeSelectionWindow]::WindowTitle, [CCTextDefault24]::new())
     }
 
     [Void]Initialize() {
@@ -1392,7 +1397,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         )
         $this.UpdateDimensions()
         $this.Initialize()
-        $this.SetupTitle([PaintbrushColorSelectionWindow]::WindowTitle)
+        $this.SetupTitle([PaintbrushColorSelectionWindow]::WindowTitle, [CCTextDefault24]::new())
     }
 
     [Void]Initialize() {
