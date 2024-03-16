@@ -883,6 +883,10 @@ Class WindowBase {
     [Boolean[]]$BorderDrawDirty
     [Int]$Width
     [Int]$Height
+    
+    [String]$Title
+    [Boolean]$UseTitle
+    [Boolean]$TitleDirty
 
     WindowBase() {
         $this.LeftTop          = [ATCoordinatesNone]::new()
@@ -905,6 +909,9 @@ Class WindowBase {
             $true,
             $true
         )
+        $this.Title      = ''
+        $this.UseTitle   = $false
+        $this.TitleDirty = $false
         $this.UpdateDimensions()
     }
 
@@ -920,6 +927,9 @@ Class WindowBase {
         $this.BorderDrawColors = $BorderDrawColors
         $this.BorderStrings    = $BorderStrings
         $this.BorderDrawDirty  = $BorderDrawDirty
+        $this.Title            = ''
+        $this.UseTitle         = $false
+        $this.TitleDirty       = $false
         $this.UpdateDimensions()
     }
 
@@ -1008,11 +1018,38 @@ Class WindowBase {
         }
 
         Write-Host "$($bt.ToAnsiControlSequenceString())$($bb.ToAnsiControlSequenceString())$($bl.ToAnsiControlSequenceString())$($br.ToAnsiControlSequenceString())"
+
+        If($this.UseTitle -EQ $true) {
+            If($this.TitleDirty -EQ $true) {
+                [ATString]$a = [ATString]@{
+                    Prefix = [ATStringPrefix]@{
+                        ForegroundColor = [CCTextDefault24]::new()
+                        Coordinates     = [ATCoordinates]@{
+                            Row    = $this.LeftTop.Row
+                            Column = $this.LeftTop.Column + 2
+                        }
+                    }
+                    UserData   = $this.Title
+                    UseATReset = $true
+                }
+
+                Write-Host "$($a.ToAnsiControlSequenceString())"
+                $this.TitleDirty = $false
+            }
+        }
     }
 
     [Void]UpdateDimensions() {
         $this.Width  = $this.RightBottom.Column - $this.LeftTop.Column
         $this.Height = $this.RightBottom.Row - $this.LeftTop.Row
+    }
+
+    [Void]SetupTitle(
+        [String]$Title
+    ) {
+        $this.UseTitle   = $true
+        $this.TitleDirty = $true
+        $this.Title      = $Title
     }
 }
 
@@ -1035,6 +1072,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
     Static [String]$WindowBorderBottomStr  = "`u{2767}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2026}`u{2619}"
     Static [String]$WindowBorderLeftStr    = "`u{23A8}"
     Static [String]$WindowBorderRightStr   = "`u{23AC}"
+    Static [String]$WindowTitle            = 'Canvas Type'
 
     Static [ATString]$OptionAActual = [ATString]@{
         Prefix = [ATStringPrefix]@{
@@ -1100,6 +1138,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
         )
         $this.UpdateDimensions()
         $this.Initialize()
+        $this.SetupTitle([CanvasTypeSelectionWindow]::WindowTitle)
     }
 
     [Void]Initialize() {
@@ -1295,6 +1334,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     Static [String]$RhdTitle              = 'R'
     Static [String]$GhdTitle              = 'G'
     Static [String]$BhdTitle              = 'B'
+    Static [String]$WindowTitle           = 'PBrush Color'
 
     Static [ATStringComposite]$ColorHeader         = $null
     Static [ATStringComposite]$ColorGroup1         = $null
@@ -1352,6 +1392,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         )
         $this.UpdateDimensions()
         $this.Initialize()
+        $this.SetupTitle([PaintbrushColorSelectionWindow]::WindowTitle)
     }
 
     [Void]Initialize() {
