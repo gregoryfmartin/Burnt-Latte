@@ -1115,6 +1115,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
     [Boolean]$ChevronDirty
     [Boolean]$OptionALabelDirty
     [Boolean]$OptionBLabelDirty
+    [Boolean]$NeedRestoredFromGlobalState
     [List[ValueTuple[[ATString], [Boolean]]]]$ChevronList
     [Int]$ActiveChevronIndex
     [ATCoordinates]$OptionALabelDrawCoordinates
@@ -1151,6 +1152,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
         $this.ChevronDirty                = $true
         $this.OptionALabelDirty           = $true
         $this.OptionBLabelDirty           = $true
+        $this.NeedRestoredFromGlobalState = $false
         $this.OptionALabelDrawCoordinates = [ATCoordinates]@{
             Row    = 3
             Column = 4
@@ -1164,6 +1166,16 @@ Class CanvasTypeSelectionWindow : WindowBase {
         [CanvasTypeSelectionWindow]::OptionABlankActual.Prefix.Coordinates = $this.OptionALabelDrawCoordinates
         [CanvasTypeSelectionWindow]::OptionBBlankActual.Prefix.Coordinates = $this.OptionBLabelDrawCoordinates
         $this.CreateChevrons()
+    }
+
+    [Void]StateRefresh() {
+        $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations = [ATDecoration]@{
+            Blink = $true
+            Bold  = $true
+        }
+        $this.ChevronDirty            = $true
+        $this.NeedRestoredFromGlobalState = $false
+        $this.Draw()
     }
 
     [Void]CreateChevrons() {
@@ -1232,8 +1244,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
     [Void]HandleInput() {
         $keyCap = $Script:Rui.ReadKey('IncludeKeyDown, NoEcho')
         Switch($keyCap.VirtualKeyCode) {
-            39 {
-                # Right
+            39 { # Right
                 $this.ChevronList[$this.ActiveChevronIndex].Item2                        = $false
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData               = [CanvasTypeSelectionWindow]::ChevronBlankActual
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations     = [ATDecorationNone]::new()
@@ -1249,15 +1260,14 @@ Class CanvasTypeSelectionWindow : WindowBase {
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData           = [CanvasTypeSelectionWindow]::ChevronCharacterActual
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations = [ATDecoration]@{
                     Blink = $true
-                    Bold = $true
+                    Bold  = $true
                 }
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCAppleNOrangeLight24]::new()
 
                 $this.ChevronDirty = $true
             }
 
-            37 {
-                # Left
+            37 { # Left
                 $this.ChevronList[$this.ActiveChevronIndex].Item2                        = $false
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData               = [CanvasTypeSelectionWindow]::ChevronBlankActual
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations     = [ATDecorationNone]::new()
@@ -1273,16 +1283,14 @@ Class CanvasTypeSelectionWindow : WindowBase {
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData           = [CanvasTypeSelectionWindow]::ChevronCharacterActual
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations = [ATDecoration]@{
                     Blink = $true
-                    Bold = $true
+                    Bold  = $true
                 }
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.ForegroundColor = [CCAppleNOrangeLight24]::new()
 
                 $this.ChevronDirty = $true
             }
 
-            13 {
-                # Enter
-
+            13 { # Enter
                 # Remove the blink status from the active chevron
                 # This would need replaced when the program re-enters the state from later
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations.Blink = $false
@@ -1905,54 +1913,54 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                             } Else {
                                 $Script:PaintbrushColor.Red = 255
                             }
-    
+
                             $this.UpdateRedColorDialData()
                             $this.UpdateRedColorGroup()
                             $this.SetRedColorAreaDirty()
-    
+
                             If($this.RlaActive -EQ $false) {
                                 $this.RlaActive = $true
                                 $this.RlaDirty  = $true
                             }
-    
+
                             Break
                         }
-    
+
                         ([PbscwState]::ChannelGreenSelect) {
                             If($Script:PaintbrushColor.Green -GT 0) {
                                 $Script:PaintbrushColor.Green--
                             } Else {
                                 $Script:PaintbrushColor.Green = 255
                             }
-    
+
                             $this.UpdateGreenColorDialData()
                             $this.UpdateGreenColorGroup()
                             $this.SetGreenColorAreaDirty()
-    
+
                             If($this.GlaActive -EQ $false) {
                                 $this.GlaActive = $true
                                 $this.GlaDirty  = $true
                             }
-    
+
                             Break
                         }
-    
+
                         ([PbscwState]::ChannelBlueSelect) {
                             If($Script:PaintbrushColor.Blue -GT 0) {
                                 $Script:PaintbrushColor.Blue--
                             } Else {
                                 $Script:PaintbrushColor.Blue = 255
                             }
-    
+
                             $this.UpdateBlueColorDialData()
                             $this.UpdateBlueColorGroup()
                             $this.SetBlueColorAreaDirty()
-    
+
                             If($this.BlaActive -EQ $false) {
                                 $this.BlaActive = $true
                                 $this.BlaDirty  = $true
                             }
-    
+
                             Break
                         }
                     }
@@ -1977,54 +1985,54 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                             } Else {
                                 $Script:PaintbrushColor.Red = 0
                             }
-    
+
                             $this.UpdateRedColorDialData()
                             $this.UpdateRedColorGroup()
                             $this.SetRedColorAreaDirty()
-    
+
                             If($this.RraActive -EQ $false) {
                                 $this.RraActive = $true
                                 $this.RraDirty  = $true
                             }
-    
+
                             Break
                         }
-    
+
                         ([PbscwState]::ChannelGreenSelect) {
                             If($Script:PaintbrushColor.Green -LT 255) {
                                 $Script:PaintbrushColor.Green++
                             } Else {
                                 $Script:PaintbrushColor.Green = 0
                             }
-    
+
                             $this.UpdateGreenColorDialData()
                             $this.UpdateGreenColorGroup()
                             $this.SetGreenColorAreaDirty()
-    
+
                             If($this.GraActive -EQ $false) {
                                 $this.GraActive = $true
                                 $this.GraDirty  = $true
                             }
-    
+
                             Break
                         }
-    
+
                         ([PbscwState]::ChannelBlueSelect) {
                             If($Script:PaintbrushColor.Blue -LT 255) {
                                 $Script:PaintbrushColor.Blue++
                             } Else {
                                 $Script:PaintbrushColor.Blue = 0
                             }
-    
+
                             $this.UpdateBlueColorDialData()
                             $this.UpdateBlueColorGroup()
                             $this.SetBlueColorAreaDirty()
-    
+
                             If($this.BraActive -EQ $false) {
                                 $this.BraActive = $true
                                 $this.BraDirty  = $true
                             }
-    
+
                             Break
                         }
                     }
@@ -2041,9 +2049,17 @@ Class PaintbrushColorSelectionWindow : WindowBase {
             }
 
             27 { # Escape Key - Transition Core State back to Canvas Type Selection
+                # Disable the color groups
+                $this.DisableRedColorGroup()
+                $this.DisableGreenColorGroup()
+                $this.DisableBlueColorGroup()
+                $this.SetColorAreaDirty()
+                $this.Draw()
+
                 # Let's just transition the state back at this point to see what happens
-                $Script:PreviousState = $Script:GlobalState
-                $Script:GlobalState   = [ProgramState]::CanvasTypeSelection
+                $Script:PreviousState                                   = $Script:GlobalState
+                $Script:GlobalState                                     = [ProgramState]::CanvasTypeSelection
+                $Script:TheCanvasTypeWindow.NeedRestoredFromGlobalState = $true
             }
         }
     }
@@ -2211,6 +2227,10 @@ $Script:StateBlockTable = @{
     }
 
     [ProgramState]::CanvasTypeSelection = {
+        If($Script:PreviousState -EQ [ProgramState]::ColorSelection -AND $Script:TheCanvasTypeWindow.NeedRestoredFromGlobalState -EQ $true) {
+            $Script:TheCanvasTypeWindow.StateRefresh()
+        }
+
         $Script:TheCanvasTypeWindow.Draw()
 
         # TEST CODE
