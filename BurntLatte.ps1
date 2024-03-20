@@ -1304,6 +1304,12 @@ Class CanvasTypeSelectionWindow : WindowBase {
                     $Script:TheCanvasType = [CanvasType]::Enemy
                 }
 
+                # Set the PBSCW Restore Flag if we've come back here from there
+                If($Script:PreviousState -EQ [ProgramState]::ColorSelection) {
+                    $Script:ThePBCSWindow.NeedRestoredFromGlobalState = $true
+                }
+
+                # THIS ONLY WORKS ON A FIRST PASS!
                 # Recreate the border of the Canvas Window
                 $Script:TheCanvasWindow.CreateWindowBorder()
 
@@ -1359,26 +1365,27 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     Static [ConsoleColor24]$ColorDialArrowDefaultColor   = [CCTextDefault24]::new()
     Static [ConsoleColor24]$ColorDialArrowHighlightColor = [CCAppleNPinkLight24]::new()
 
-    [Boolean]$ColorHeaderDirty     = $true
-    [Boolean]$RedColorGroupDirty   = $true
-    [Boolean]$GreenColorGroupDirty = $true
-    [Boolean]$BlueColorGroupDirty  = $true
-    [Boolean]$RraDirty             = $true
-    [Boolean]$RraActive            = $false
-    [Boolean]$RlaDirty             = $true
-    [Boolean]$RlaActive            = $false
-    [Boolean]$GraDirty             = $true
-    [Boolean]$GraActive            = $false
-    [Boolean]$GlaDirty             = $true
-    [Boolean]$GlaActive            = $false
-    [Boolean]$BraDirty             = $true
-    [Boolean]$BraActive            = $false
-    [Boolean]$BlaDirty             = $true
-    [Boolean]$BlaActive            = $false
-    [Boolean]$RvalDirty            = $true
-    [Boolean]$BvalDirty            = $true
-    [Boolean]$GvalDirty            = $true
-    [Boolean]$ColSumBarDirty       = $true
+    [Boolean]$ColorHeaderDirty            = $true
+    [Boolean]$RedColorGroupDirty          = $true
+    [Boolean]$GreenColorGroupDirty        = $true
+    [Boolean]$BlueColorGroupDirty         = $true
+    [Boolean]$RraDirty                    = $true
+    [Boolean]$RraActive                   = $false
+    [Boolean]$RlaDirty                    = $true
+    [Boolean]$RlaActive                   = $false
+    [Boolean]$GraDirty                    = $true
+    [Boolean]$GraActive                   = $false
+    [Boolean]$GlaDirty                    = $true
+    [Boolean]$GlaActive                   = $false
+    [Boolean]$BraDirty                    = $true
+    [Boolean]$BraActive                   = $false
+    [Boolean]$BlaDirty                    = $true
+    [Boolean]$BlaActive                   = $false
+    [Boolean]$RvalDirty                   = $true
+    [Boolean]$BvalDirty                   = $true
+    [Boolean]$GvalDirty                   = $true
+    [Boolean]$ColSumBarDirty              = $true
+    [Boolean]$NeedRestoredFromGlobalState = $false
 
     [PbscwState]$State = [PbscwState]::None
 
@@ -1764,6 +1771,31 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     [Void]SetBlueColorAreaDirty() {
         $this.BlueColorGroupDirty = $true
         $this.BvalDirty           = $true
+    }
+
+    [Void]StateRefresh() {
+        Switch($this.State) {
+            ([PbscwState]::ChannelRedSelect) {
+                $this.EnableRedColorGroup()
+
+                Break
+            }
+
+            ([PbscwState]::ChannelGreenSelect) {
+                $this.EnableGreenColorGroup()
+
+                Break
+            }
+
+            ([PbscwState]::ChannelBlueSelect) {
+                $this.EnableBlueColorGroup()
+
+                Break
+            }
+        }
+
+        $this.NeedRestoredFromGlobalState = $false
+        $this.Draw()
     }
 
     [Void]Draw() {
@@ -2240,6 +2272,10 @@ $Script:StateBlockTable = @{
     }
 
     [ProgramState]::ColorSelection = {
+        If($Script:PreviousState -NE [ProgramState]::ColorSelection -AND $Script:ThePBCSWindow.NeedRestoredFromGlobalState -EQ $true) {
+            $Script:ThePBCSWindow.StateRefresh()
+        }
+
         $Script:ThePBCSWindow.Draw()
         $Script:TheCanvasWindow.Draw()
 
