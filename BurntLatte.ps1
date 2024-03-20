@@ -2173,6 +2173,12 @@ class CanvasWindow : WindowBase {
             Row    = [CanvasWindow]::WindowRBRow
             Column = [CanvasWindow]::WindowRBColumn
         }
+        $this.BorderDrawDirty = [Boolean[]](
+            $true,
+            $true,
+            $true,
+            $true
+        )
         $this.UpdateDimensions()
         [CanvasWindow]::WindowBorderTopStr    = "`u{2767}"
         [CanvasWindow]::WindowBorderBottomStr = "`u{2767}"
