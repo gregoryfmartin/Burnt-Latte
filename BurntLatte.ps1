@@ -1173,7 +1173,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
             Blink = $true
             Bold  = $true
         }
-        $this.ChevronDirty            = $true
+        $this.ChevronDirty                = $true
         $this.NeedRestoredFromGlobalState = $false
         $this.Draw()
     }
