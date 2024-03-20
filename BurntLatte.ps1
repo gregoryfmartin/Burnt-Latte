@@ -2146,6 +2146,12 @@ class CanvasWindow : WindowBase {
         # Beacuse the dimensions of this window can vary, and because it can regen on the fly,
         # the horizontal border will need to be dynamically created in much the same way as the
         # verticals do.
+        #
+        # There's also a need to clean the area when the window is "recreated." Two functional aspects
+        # arise here. First, how to clean the area. Second, how to address a "recreate" request when
+        # there are contents in the area. This second question perhaps ties somewhat into a larger
+        # question about how the data for the array are actually stored in the backend for export.
+        # I have ideas about this, but they're not going to be answered here.
         Switch($Script:TheCanvasType) {
             ([CanvasType]::Scene) {
                 # Scenes are 18x48 Cells
