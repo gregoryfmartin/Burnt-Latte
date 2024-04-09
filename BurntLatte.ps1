@@ -1246,7 +1246,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
     [Void]HandleInput() {
         $keyCap = $Script:Rui.ReadKey('IncludeKeyDown, NoEcho')
         Switch($keyCap.VirtualKeyCode) {
-            39 { # Right
+            39 { # RIGHT
                 $this.ChevronList[$this.ActiveChevronIndex].Item2                        = $false
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData               = [CanvasTypeSelectionWindow]::ChevronBlankActual
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations     = [ATDecorationNone]::new()
@@ -1269,7 +1269,7 @@ Class CanvasTypeSelectionWindow : WindowBase {
                 $this.ChevronDirty = $true
             }
 
-            37 { # Left
+            37 { # LEFT
                 $this.ChevronList[$this.ActiveChevronIndex].Item2                        = $false
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.UserData               = [CanvasTypeSelectionWindow]::ChevronBlankActual
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations     = [ATDecorationNone]::new()
@@ -1292,30 +1292,30 @@ Class CanvasTypeSelectionWindow : WindowBase {
                 $this.ChevronDirty = $true
             }
 
-            13 { # Enter
-                # Remove the blink status from the active chevron
-                # This would need replaced when the program re-enters the state from later
+            13 { # ENTER
+                # REMOVE THE BLINK STATUS FROM THE ACTIVE CHEVRON
+                # THIS WOULD NEED REPLACED WHEN THE PROGRAM RE-ENTERS THE STATE FROM LATER
                 $this.ChevronList[$this.ActiveChevronIndex].Item1.Prefix.Decorations.Blink = $false
                 $this.ChevronDirty = $true
-                $this.Draw() # Manually force a redraw since Draw won't get called in time before the state transition
+                $this.Draw() # MANUALLY FORCE A REDRAW SINCE DRAW WON'T GET CALLED IN TIME BEFORE THE STATE TRANSITION
 
-                # Capture the Active Chevron and set the CanvasType according to it
+                # CAPTURE THE ACTIVE CHEVRON AND SET THE CANVASTYPE ACCORDING TO IT
                 If($this.ActiveChevronIndex -EQ 0) {
                     $Script:TheCanvasType = [CanvasType]::Scene
                 } Elseif($this.ActiveChevronIndex -EQ 1) {
                     $Script:TheCanvasType = [CanvasType]::Enemy
                 }
 
-                # Set the PBSCW Restore Flag if we've come back here from there
+                # SET THE PBSCW RESTORE FLAG IF WE'VE COME BACK HERE FROM THERE
                 If($Script:PreviousState -EQ [ProgramState]::ColorSelection) {
                     $Script:ThePBCSWindow.NeedRestoredFromGlobalState = $true
                 }
 
                 # THIS ONLY WORKS ON A FIRST PASS!
-                # Recreate the border of the Canvas Window
+                # RECREATE THE BORDER OF THE CANVAS WINDOW
                 $Script:TheCanvasWindow.CreateWindowBorder()
 
-                # Change the state of the program
+                # CHANGE THE STATE OF THE PROGRAM
                 $Script:PreviousState = $Script:GlobalState
                 $Script:GlobalState   = [ProgramState]::ColorSelection
             }
@@ -1658,7 +1658,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
         }
 
         $this.State = [PbscwState]::ChannelRedSelect
-        # For the initial state, which is red
+        # FOR THE INITIAL STATE, WHICH IS RED
         $this.EnableRedColorGroup()
     }
 
@@ -1900,7 +1900,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
     [Void]HandleInput() {
         $keyCap = $Script:Rui.ReadKey('IncludeKeyDown, IncludeKeyUp, NoEcho')
         Switch($keyCap.VirtualKeyCode) {
-            9 { # Tab - Cycles through the channel options in a specific direction
+            9 { # TAB - CYCLES THROUGH THE CHANNEL OPTIONS IN A SPECIFIC DIRECTION
                 If($keyCap.KeyDown -EQ $true) {
                     If($keyCap.ControlKeyState -LIKE "*shiftpressed*") { # THERE HAS TO BE A BETTER WAY TO DO THIS
                         If($this.State -GT 0) {
@@ -1938,7 +1938,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 }
             }
 
-            37 { # Left Arrow - Decrement the value by 1; wrap to 255 if -1 is hit
+            37 { # LEFT ARROW - DECREMENT THE VALUE BY 1; WRAP TO 255 IF -1 IS HIT
                 If($keyCap.KeyDown -EQ $true) {
                     Switch($this.State) {
                         ([PbscwState]::ChannelRedSelect) {
@@ -2010,7 +2010,7 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 }
             }
 
-            39 { # Right Arrow - Increment the value by 1; wrap to 0 if 255 is hit
+            39 { # RIGHT ARROW - INCREMENT THE VALUE BY 1; WRAP TO 0 IF 255 IS HIT
                 If($keyCap.KeyDown -EQ $true) {
                     Switch($this.State) {
                         ([PbscwState]::ChannelRedSelect) {
@@ -2082,15 +2082,15 @@ Class PaintbrushColorSelectionWindow : WindowBase {
                 }
             }
 
-            27 { # Escape Key - Transition Core State back to Canvas Type Selection
-                # Disable the color groups
+            27 { # ESCAPE KEY - TRANSITION CORE STATE BACK TO CANVAS TYPE SELECTION
+                # DISABLE THE COLOR GROUPS
                 $this.DisableRedColorGroup()
                 $this.DisableGreenColorGroup()
                 $this.DisableBlueColorGroup()
                 $this.SetColorAreaDirty()
                 $this.Draw()
 
-                # Let's just transition the state back at this point to see what happens
+                # LET'S JUST TRANSITION THE STATE BACK AT THIS POINT TO SEE WHAT HAPPENS
                 $Script:PreviousState                                   = $Script:GlobalState
                 $Script:GlobalState                                     = [ProgramState]::CanvasTypeSelection
                 $Script:TheCanvasTypeWindow.NeedRestoredFromGlobalState = $true
@@ -2109,13 +2109,26 @@ class CanvasWindow : WindowBase {
     Static [String]$WindowBorderLeftStr   = "`u{23A8}"
     Static [String]$WindowBorderRightStr  = "`u{23AC}"
 
-    Static [ATString]$CleanerLine = $null
+    Static [ATString]$CleanerLine = [ATString]@{
+        Prefix = [ATStringPrefix]@{}
+        UserData = $(
+            Invoke-Command -ScriptBlock {
+                [String]$temp = ''
+
+                For($a = 0; $a -LT 60; $a++) {
+                    $temp += ' '
+                }
+
+                Return $temp
+            }
+        )
+    }
 
     [Boolean]$NeedRestoredFromGlobalState = $false
 
     CanvasWindow() : base() {
         $this.CreateWindowBorder()
-        # This window presents a special case, therefore this call is abstracted away from its usual place here.
+        # THIS WINDOW PRESENTS A SPECIAL CASE, THEREFORE THIS CALL IS ABSTRACTED AWAY FROM ITS USUAL PLACE HERE.
         # $this.LeftTop = [ATCoordinates]@{
         #     Row    = [CanvasWindow]::WindowLTRow
         #     Column = [CanvasWindow]::WindowLTColumn
@@ -2130,22 +2143,22 @@ class CanvasWindow : WindowBase {
             [CCWhite24]::new(),
             [CCWhite24]::new()
         )
-        # This window presents a special case, therefore this call is abstracted away from its usual place here.
+        # THIS WINDOW PRESENTS A SPECIAL CASE, THEREFORE THIS CALL IS ABSTRACTED AWAY FROM ITS USUAL PLACE HERE.
         # $this.BorderStrings = [String[]](
         #     [CanvasWindow]::WindowBorderTopStr,
         #     [CanvasWindow]::WindowBorderBottomStr,
         #     [CanvasWindow]::WindowBorderLeftStr,
         #     [CanvasWindow]::WindowBorderRightStr
         # )
-        # This window presents a special case, therefore this call is abstracted away from its usual place here.
+        # THIS WINDOW PRESENTS A SPECIAL CASE, THEREFORE THIS CALL IS ABSTRACTED AWAY FROM ITS USUAL PLACE HERE.
         # $this.UpdateDimensions()
         $this.Initialize()
     }
 
     [Void]StateRefresh() {
-        # This shouldn't be called unless CreateWindowBorder has been called first!
-        # TODO: Clean the largest space before attempting to redraw the window.
-        For($a = 1; $a -LT $this.Height; $a++) {
+        # THIS SHOULDN'T BE CALLED UNLESS CREATEWINDOWBORDER HAS BEEN CALLED FIRST!
+        # TODO: CLEAN THE LARGEST SPACE BEFORE ATTEMPTING TO REDRAW THE WINDOW.
+        For($a = 0; $a -LT 20; $a++) {
             [CanvasWindow]::CleanerLine.Prefix.Coordinates = [ATCoordinates]@{
                 Row    = $this.LeftTop.Row + $a
                 Column = $this.LeftTop.Column
@@ -2163,30 +2176,30 @@ class CanvasWindow : WindowBase {
     [Void]Initialize() {}
 
     [Void]CreateWindowBorder() {
-        # Beacuse the dimensions of this window can vary, and because it can regen on the fly,
-        # the horizontal border will need to be dynamically created in much the same way as the
-        # verticals do.
+        # BEACUSE THE DIMENSIONS OF THIS WINDOW CAN VARY, AND BECAUSE IT CAN REGEN ON THE FLY,
+        # THE HORIZONTAL BORDER WILL NEED TO BE DYNAMICALLY CREATED IN MUCH THE SAME WAY AS THE
+        # VERTICALS DO.
         #
-        # There's also a need to clean the area when the window is "recreated." Two functional aspects
-        # arise here. First, how to clean the area. Second, how to address a "recreate" request when
-        # there are contents in the area. This second question perhaps ties somewhat into a larger
-        # question about how the data for the array are actually stored in the backend for export.
-        # I have ideas about this, but they're not going to be answered here.
+        # THERE'S ALSO A NEED TO CLEAN THE AREA WHEN THE WINDOW IS "RECREATED." TWO FUNCTIONAL ASPECTS
+        # ARISE HERE. FIRST, HOW TO CLEAN THE AREA. SECOND, HOW TO ADDRESS A "RECREATE" REQUEST WHEN
+        # THERE ARE CONTENTS IN THE AREA. THIS SECOND QUESTION PERHAPS TIES SOMEWHAT INTO A LARGER
+        # QUESTION ABOUT HOW THE DATA FOR THE ARRAY ARE ACTUALLY STORED IN THE BACKEND FOR EXPORT.
+        # I HAVE IDEAS ABOUT THIS, BUT THEY'RE NOT GOING TO BE ANSWERED HERE.
         Switch($Script:TheCanvasType) {
             ([CanvasType]::Scene) {
-                # Scenes are 18x48 Cells
+                # SCENES ARE 18X48 CELLS
                 [CanvasWindow]::WindowRBRow    = [CanvasWindow]::WindowLTRow + 18
                 [CanvasWindow]::WindowRBColumn = [CanvasWindow]::WindowLTColumn + 48
             }
 
             ([CanvasType]::Enemy) {
-                # Enemy Images are 15x37 Cells
+                # ENEMY IMAGES ARE 15X37 CELLS
                 [CanvasWindow]::WindowRBRow    = [CanvasWindow]::WindowLTRow + 15
                 [CanvasWindow]::WindowRBColumn = [CanvasWindow]::WindowLTColumn + 37
             }
 
             Default {
-                # This will default to Scene Type
+                # THIS WILL DEFAULT TO SCENE TYPE
                 [CanvasWindow]::WindowRBRow    = [CanvasWindow]::WindowLTRow + 18
                 [CanvasWindow]::WindowRBColumn = [CanvasWindow]::WindowLTColumn + 48
             }
@@ -2209,7 +2222,7 @@ class CanvasWindow : WindowBase {
         [CanvasWindow]::WindowBorderTopStr    = "`u{2767}"
         [CanvasWindow]::WindowBorderBottomStr = "`u{2767}"
 
-        For($a = 0; $a -LT $this.Width; $a++) { # This portion could be problematic
+        For($a = 0; $a -LT $this.Width; $a++) { # THIS PORTION COULD BE PROBLEMATIC
             [CanvasWindow]::WindowBorderTopStr    += "`u{2026}"
             [CanvasWindow]::WindowBorderBottomStr += "`u{2026}"
         }
@@ -2224,21 +2237,25 @@ class CanvasWindow : WindowBase {
             [CanvasWindow]::WindowBorderRightStr
         )
 
-        [CanvasWindow]::CleanerLine = [ATString]@{
-            Prefix = [ATStringPrefix]@{}
-            UserData = $(
-                Invoke-Command -ScriptBlock {
-                    [String]$temp = ''
+        # THIS WAS A REALLY STUPID THING TO HAVE DONE
+        # I NEED THE LENGTH OF THE LINE TO MATCH THE MAX
+        # WIDTH AT ALL TIMES REGARDLESS OF THE INTENDED WIDTH
+        # OF THE CANVAS BASED ON TYPE.
+        # [CanvasWindow]::CleanerLine = [ATString]@{
+        #     Prefix = [ATStringPrefix]@{}
+        #     UserData = $(
+        #         Invoke-Command -ScriptBlock {
+        #             [String]$temp = ''
 
-                    For($a = 0; $a -LT $this.Width; $a++) {
-                        $temp += ' '
-                    }
+        #             For($a = 0; $a -LT $this.Width; $a++) {
+        #                 $temp += ' '
+        #             }
 
-                    Return $temp
-                }
-            )
-            UseATReset = $false
-        }
+        #             Return $temp
+        #         }
+        #     )
+        #     UseATReset = $false
+        # }
     }
 }
 
