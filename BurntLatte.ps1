@@ -6,6 +6,8 @@ using namespace System.Media
 
 Add-Type -AssemblyName PresentationCore
 
+Set-StrictMode -Version Latest
+
 Enum ProgramState {
     InitialLoad
     CanvasTypeSelection
@@ -2107,6 +2109,10 @@ class CanvasWindow : WindowBase {
     Static [String]$WindowBorderLeftStr   = "`u{23A8}"
     Static [String]$WindowBorderRightStr  = "`u{23AC}"
 
+    Static [ATString]$CleanerLine = $null
+
+    [Boolean]$NeedRestoredFromGlobalState = $false
+
     CanvasWindow() : base() {
         $this.CreateWindowBorder()
         # This window presents a special case, therefore this call is abstracted away from its usual place here.
@@ -2134,6 +2140,20 @@ class CanvasWindow : WindowBase {
         # This window presents a special case, therefore this call is abstracted away from its usual place here.
         # $this.UpdateDimensions()
         $this.Initialize()
+    }
+
+    [Void]StateRefresh() {
+        # This shouldn't be called unless CreateWindowBorder has been called first!
+        # TODO: Clean the largest space before attempting to redraw the window.
+        For($a = 1; $a -LT $this.Height; $a++) {
+            [CanvasWindow]::CleanerLine.Prefix.Coordinates = [ATCoordinates]@{
+                Row    = $this.LeftTop.Row + $a
+                Column = $this.LeftTop.Column
+            }
+            Write-Host "$([CanvasWindow]::CleanerLine.ToAnsiControlSequenceString())"
+        }
+        $this.Draw()
+        $this.NeedRestoredFromGlobalState = $false
     }
 
     [Void]Draw() {
@@ -2203,6 +2223,22 @@ class CanvasWindow : WindowBase {
             [CanvasWindow]::WindowBorderLeftStr,
             [CanvasWindow]::WindowBorderRightStr
         )
+
+        [CanvasWindow]::CleanerLine = [ATString]@{
+            Prefix = [ATStringPrefix]@{}
+            UserData = $(
+                Invoke-Command -ScriptBlock {
+                    [String]$temp = ''
+
+                    For($a = 0; $a -LT $this.Width; $a++) {
+                        $temp += ' '
+                    }
+
+                    Return $temp
+                }
+            )
+            UseATReset = $false
+        }
     }
 }
 
@@ -2273,6 +2309,7 @@ $Script:StateBlockTable = @{
     [ProgramState]::CanvasTypeSelection = {
         If($Script:PreviousState -EQ [ProgramState]::ColorSelection -AND $Script:TheCanvasTypeWindow.NeedRestoredFromGlobalState -EQ $true) {
             $Script:TheCanvasTypeWindow.StateRefresh()
+            $Script:TheCanvasWindow.NeedRestoredFromGlobalState = $true
         }
 
         $Script:TheCanvasTypeWindow.Draw()
@@ -2286,6 +2323,10 @@ $Script:StateBlockTable = @{
     [ProgramState]::ColorSelection = {
         If($Script:PreviousState -NE [ProgramState]::ColorSelection -AND $Script:ThePBCSWindow.NeedRestoredFromGlobalState -EQ $true) {
             $Script:ThePBCSWindow.StateRefresh()
+
+            If($Script:TheCanvasWindow.NeedRestoredFromGlobalState -EQ $true) {
+                $Script:TheCanvasWindow.StateRefresh()
+            }
         }
 
         $Script:ThePBCSWindow.Draw()
