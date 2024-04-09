@@ -1313,6 +1313,9 @@ Class CanvasTypeSelectionWindow : WindowBase {
 
                 # THIS ONLY WORKS ON A FIRST PASS!
                 # RECREATE THE BORDER OF THE CANVAS WINDOW
+                # BECAUSE IT'S POSSIBLE TO PRESS THE ENTER KEY ON THE CHOICE THAT WAS
+                # PREVIOUSLY SET FOR THE PROGRAM, WE NEED TO CHECK AND SEE IF THE CHOICE
+                # IS THE SAME, AND REFRESH THE WINDOW ONLY IF IT'S DIFFERENT
                 $Script:TheCanvasWindow.CreateWindowBorder()
 
                 # CHANGE THE STATE OF THE PROGRAM
