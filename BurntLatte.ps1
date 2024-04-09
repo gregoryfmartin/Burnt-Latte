@@ -2104,6 +2104,8 @@ class CanvasWindow : WindowBase {
     Static [Int]$WindowLTColumn           = 25
     Static [Int]$WindowRBRow              = 0
     Static [Int]$WindowRBColumn           = 0
+    Static [Int]$ClearRows                = 20
+    Static [Int]$ClearColumns             = 60
     Static [String]$WindowBorderTopStr    = ''
     Static [String]$WindowBorderBottomStr = ''
     Static [String]$WindowBorderLeftStr   = "`u{23A8}"
@@ -2115,7 +2117,7 @@ class CanvasWindow : WindowBase {
             Invoke-Command -ScriptBlock {
                 [String]$temp = ''
 
-                For($a = 0; $a -LT 60; $a++) {
+                For($a = 0; $a -LT [CanvasWindow]::ClearColumns; $a++) {
                     $temp += ' '
                 }
 
@@ -2158,7 +2160,7 @@ class CanvasWindow : WindowBase {
     [Void]StateRefresh() {
         # THIS SHOULDN'T BE CALLED UNLESS CREATEWINDOWBORDER HAS BEEN CALLED FIRST!
         # TODO: CLEAN THE LARGEST SPACE BEFORE ATTEMPTING TO REDRAW THE WINDOW.
-        For($a = 0; $a -LT 20; $a++) {
+        For($a = 0; $a -LT [CanvasWindow]::ClearRows; $a++) {
             [CanvasWindow]::CleanerLine.Prefix.Coordinates = [ATCoordinates]@{
                 Row    = $this.LeftTop.Row + $a
                 Column = $this.LeftTop.Column
