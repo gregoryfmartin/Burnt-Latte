@@ -1299,11 +1299,21 @@ Class CanvasTypeSelectionWindow : WindowBase {
                 $this.ChevronDirty = $true
                 $this.Draw() # MANUALLY FORCE A REDRAW SINCE DRAW WON'T GET CALLED IN TIME BEFORE THE STATE TRANSITION
 
+                # ATTEMPTING TO AVOID ANOTHER GLOBAL VARIABLE HERE
+                # NOT THAT I REALLY CARE, BUT JUST TRYING SOMETHING
+                [Boolean]$CanvasStateReset = $false
+
                 # CAPTURE THE ACTIVE CHEVRON AND SET THE CANVASTYPE ACCORDING TO IT
                 If($this.ActiveChevronIndex -EQ 0) {
-                    $Script:TheCanvasType = [CanvasType]::Scene
+                    If($Script:TheCanvasType -NE [CanvasType]::Scene) {
+                        $Script:TheCanvasType = [CanvasType]::Scene
+                        $CanvasStateReset = $true
+                    }
                 } Elseif($this.ActiveChevronIndex -EQ 1) {
-                    $Script:TheCanvasType = [CanvasType]::Enemy
+                    If($Script:TheCanvasType -NE [CanvasType]::Enemy) {
+                        $Script:TheCanvasType = [CanvasType]::Enemy
+                        $CanvasStateReset = $true
+                    }
                 }
 
                 # SET THE PBSCW RESTORE FLAG IF WE'VE COME BACK HERE FROM THERE
@@ -1316,7 +1326,9 @@ Class CanvasTypeSelectionWindow : WindowBase {
                 # BECAUSE IT'S POSSIBLE TO PRESS THE ENTER KEY ON THE CHOICE THAT WAS
                 # PREVIOUSLY SET FOR THE PROGRAM, WE NEED TO CHECK AND SEE IF THE CHOICE
                 # IS THE SAME, AND REFRESH THE WINDOW ONLY IF IT'S DIFFERENT
-                $Script:TheCanvasWindow.CreateWindowBorder()
+                If($CanvasStateReset -EQ $true) {
+                    $Script:TheCanvasWindow.CreateWindowBorder()
+                }
 
                 # CHANGE THE STATE OF THE PROGRAM
                 $Script:PreviousState = $Script:GlobalState
