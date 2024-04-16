@@ -885,7 +885,7 @@ Class WindowBase {
     [Boolean[]]$BorderDrawDirty
     [Int]$Width
     [Int]$Height
-    
+
     [String]$Title
     [Boolean]$UseTitle
     [Boolean]$TitleDirty
@@ -2266,7 +2266,7 @@ class CanvasWindow : WindowBase {
 
 Class ProgramCore {
     [Boolean]$Running
-    
+
     ProgramCore() {
         $this.Running = $true
     }
