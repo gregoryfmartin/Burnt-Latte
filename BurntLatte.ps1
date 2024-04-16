@@ -1301,9 +1301,21 @@ Class CanvasTypeSelectionWindow : WindowBase {
 
                 # CAPTURE THE ACTIVE CHEVRON AND SET THE CANVASTYPE ACCORDING TO IT
                 If($this.ActiveChevronIndex -EQ 0) {
-                    $Script:TheCanvasType = [CanvasType]::Scene
+                    If($Script:TheCanvasType -NE [CanvasType]::Scene) {
+                        $Script:TheCanvasType        = [CanvasType]::Scene
+                        $Script:HasCanvasTypeChanged = $true
+                    } Else {
+                        $Script:HasCanvasTypeChanged = $false
+                    }
+                    # $Script:TheCanvasType = [CanvasType]::Scene
                 } Elseif($this.ActiveChevronIndex -EQ 1) {
-                    $Script:TheCanvasType = [CanvasType]::Enemy
+                    If($Script:TheCanvasType -NE [CanvasType]::Enemy) {
+                        $Script:TheCanvasType        = [CanvasType]::Enemy
+                        $Script:HasCanvasTypeChanged = $true
+                    } Else {
+                        $Script:HasCanvasTypeChanged = $false
+                    }
+                    # $Script:TheCanvasType = [CanvasType]::Enemy
                 }
 
                 # SET THE PBSCW RESTORE FLAG IF WE'VE COME BACK HERE FROM THERE
@@ -1316,7 +1328,10 @@ Class CanvasTypeSelectionWindow : WindowBase {
                 # BECAUSE IT'S POSSIBLE TO PRESS THE ENTER KEY ON THE CHOICE THAT WAS
                 # PREVIOUSLY SET FOR THE PROGRAM, WE NEED TO CHECK AND SEE IF THE CHOICE
                 # IS THE SAME, AND REFRESH THE WINDOW ONLY IF IT'S DIFFERENT
-                $Script:TheCanvasWindow.CreateWindowBorder()
+                If($Script:HasCanvasTypeChanged -EQ $true) {
+                    $Script:TheCanvasWindow.NeedRestoredFromGlobalState = $true
+                    $Script:TheCanvasWindow.CreateWindowBorder()
+                }
 
                 # CHANGE THE STATE OF THE PROGRAM
                 $Script:PreviousState = $Script:GlobalState
@@ -2283,15 +2298,16 @@ Class ProgramCore {
     }
 }
 
-[Boolean]                       $Script:UseSfx              = $true
-[ProgramState]                  $Script:GlobalState         = [ProgramState]::InitialLoad
-[ProgramState]                  $Script:PreviousState       = $Script:GlobalState
-[ProgramCore]                   $Script:TheProgram          = [ProgramCore]::new()
-[CanvasTypeSelectionWindow]     $Script:TheCanvasTypeWindow = $null
-[PaintbrushColorSelectionWindow]$Script:ThePBCSWindow       = $null
-[CanvasWindow]                  $Script:TheCanvasWindow     = $null
-[CanvasType]                    $Script:TheCanvasType       = [CanvasType]::None
-[ConsoleColor24]                $Script:PaintbrushColor     = [ConsoleColor24]@{
+[Boolean]                       $Script:UseSfx               = $true
+[Boolean]                       $Script:HasCanvasTypeChanged = $false
+[ProgramState]                  $Script:GlobalState          = [ProgramState]::InitialLoad
+[ProgramState]                  $Script:PreviousState        = $Script:GlobalState
+[ProgramCore]                   $Script:TheProgram           = [ProgramCore]::new()
+[CanvasTypeSelectionWindow]     $Script:TheCanvasTypeWindow  = $null
+[PaintbrushColorSelectionWindow]$Script:ThePBCSWindow        = $null
+[CanvasWindow]                  $Script:TheCanvasWindow      = $null
+[CanvasType]                    $Script:TheCanvasType        = [CanvasType]::None
+[ConsoleColor24]                $Script:PaintbrushColor      = [ConsoleColor24]@{
     Red   = 255
     Green = 5
     Blue  = 255
@@ -2331,7 +2347,7 @@ $Script:StateBlockTable = @{
     [ProgramState]::CanvasTypeSelection = {
         If($Script:PreviousState -EQ [ProgramState]::ColorSelection -AND $Script:TheCanvasTypeWindow.NeedRestoredFromGlobalState -EQ $true) {
             $Script:TheCanvasTypeWindow.StateRefresh()
-            $Script:TheCanvasWindow.NeedRestoredFromGlobalState = $true
+            # $Script:TheCanvasWindow.NeedRestoredFromGlobalState = $true
         }
 
         $Script:TheCanvasTypeWindow.Draw()
@@ -2346,8 +2362,9 @@ $Script:StateBlockTable = @{
         If($Script:PreviousState -NE [ProgramState]::ColorSelection -AND $Script:ThePBCSWindow.NeedRestoredFromGlobalState -EQ $true) {
             $Script:ThePBCSWindow.StateRefresh()
 
-            If($Script:TheCanvasWindow.NeedRestoredFromGlobalState -EQ $true) {
+            If($Script:TheCanvasWindow.NeedRestoredFromGlobalState -EQ $true -AND $Script:HasCanvasTypeChanged -EQ $true) {
                 $Script:TheCanvasWindow.StateRefresh()
+                $Script:HasCanvasTypeChanged = $false
             }
         }
 
