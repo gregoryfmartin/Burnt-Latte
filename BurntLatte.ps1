@@ -909,7 +909,7 @@ Class ATStringAnimated {
     ATStringAnimated() {
         $this.Prefix     = [ATStringPrefixNone]::new()
         $this.Animations = @()
-        $this.UseATReset = $false
+        $this.UseATReset = $true
     }
 
     ATStringAnimated(
@@ -2388,6 +2388,22 @@ Class ProgramCore {
     Blue  = 255
 }
 
+# ANIMATED STRING TEST
+[Int]$Script:Clock                      = 0
+[ATStringAnimated]$Script:AnimationTest = [ATStringAnimated]@{
+    Animations = @(
+        [AnimatedCharacter]@{
+            FrameDuration = 1500
+            MaxFrame      = 3
+            Characters    = @(
+                "`u{1BC43}",
+                "`u{1BC44}",
+                "`u{1BC45}"
+            )
+        }
+    )
+}
+
 $Script:Rui             = $(Get-Host).UI.RawUI
 $Script:StateBlockTable = @{
     [ProgramState]::InitialLoad = {
@@ -2453,6 +2469,15 @@ $Script:StateBlockTable = @{
     }
 
     [ProgramState]::CanvasPaint = {}
+
+    [ProgramState]::AnimationTest = {
+        # I'M NOT SURE THIS WOULD EVER HAPPEN, BUT HERE WE GO
+        If(($Script:Clock + 1) -GT [Int]::MaxValue) {
+            $Script:Clock = 0
+        }
+
+        
+    }
 }
 
 Clear-Host
