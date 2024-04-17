@@ -13,6 +13,7 @@ Enum ProgramState {
     CanvasTypeSelection
     ColorSelection
     CanvasPaint
+    AnimationTest
 }
 
 Enum PbscwState {
