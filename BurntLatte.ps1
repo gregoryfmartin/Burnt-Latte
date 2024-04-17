@@ -864,6 +864,80 @@ Class ATStringComposite {
     }
 }
 
+Class AnimatedCharacter {
+    [Int]$FrameDuration
+    [Int]$FrameCounter
+    [Int]$CurrentFrame
+    [Int]$MaxFrame
+    [Boolean]$AnimationDirty
+    [String[]]$Characters
+
+    [Void]Update(
+        [Int]$Ticks
+    ) {
+        # THIS IS SO RUDIMENTARY, BUT WHAT THE HELL EVER
+        $this.FrameCounter += $Ticks
+        If($this.FrameCounter -GE $this.FrameDuration) {
+            $this.FrameCounter = 0
+
+            # ALL I CARE ABOUT RIGHT NOW IS FORWARD LOOPING ANIMATION
+            If($this.CurrentFrame -LT $this.MaxFrame) {
+                $this.CurrentFrame++
+            } Else {
+                $this.CurrentFrame = 0
+            }
+
+            # SET THE DIRTY FLAG TO UPDATE
+            $this.AnimationDirty = $true
+        } Else {
+            # SET THE DIRTY FLAG TO FALSE
+            $this.AnimationDirty = $false
+        }
+    }
+
+    [String]GetCurrentFrame() {
+        Return $this.Characters[$this.CurrentFrame]
+    }
+}
+
+Class ATStringAnimated {
+    [ATStringPrefix]$Prefix
+    [AnimatedCharacter[]]$Animations
+    [Boolean]$UseATReset
+
+    ATStringAnimated() {
+        $this.Prefix     = [ATStringPrefixNone]::new()
+        $this.Animations = @()
+        $this.UseATReset = $false
+    }
+
+    ATStringAnimated(
+        [ATStringAnimated]$CopyFrom
+    ) {
+        $this.Prefix     = $CopyFrom.Prefix
+        $this.Animations = $CopyFrom.Animations
+        $this.UseATReset = $CopyFrom.UseATReset
+    }
+
+    [Void]Update(
+        [Int]$Ticks
+    ) {
+        Foreach($a in $this.Animations) {
+            $a.Update($Ticks)
+        }
+
+        If($a.AnimationDirty -EQ $true) {
+            [String]$b = "$($this.Prefix.ToAnsiControlSequenceString())$($a.GetCurrentFrame())"
+
+            If($this.UseATReset -EQ $true) {
+                $b += "$([ATControlSequences]::ModifierReset)"
+            }
+
+            Write-Host "$($b)"
+        }
+    }
+}
+
 Class WindowBase {
     Static [Int]$BorderDrawColorTop    = 0
     Static [Int]$BorderDrawColorBottom = 1
