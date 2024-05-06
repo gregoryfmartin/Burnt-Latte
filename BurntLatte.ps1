@@ -873,11 +873,9 @@ Class AnimatedCharacter {
     [Boolean]$AnimationDirty
     [String[]]$Characters
 
-    [Void]Update(
-        [Int]$Ticks
-    ) {
+    [Void]Update() {
         # THIS IS SO RUDIMENTARY, BUT WHAT THE HELL EVER
-        $this.FrameCounter += $Ticks
+        $this.FrameCounter += $Script:DeltaTime
         If($this.FrameCounter -GE $this.FrameDuration) {
             $this.FrameCounter = 0
 
@@ -2363,6 +2361,10 @@ Class ProgramCore {
 
     [Void]Run() {
         While ($this.Running -EQ $true) {
+            $Script:CurrentTime  = [DateTime]::Now.Ticks / 1e7
+            $Script:DeltaTime    = $Script:CurrentTime - $Script:PreviousTime
+            $Script:PreviousTime = $Script:CurrentTime
+
             $this.Logic()
         }
     }
@@ -2382,6 +2384,9 @@ Class ProgramCore {
 [PaintbrushColorSelectionWindow]$Script:ThePBCSWindow        = $null
 [CanvasWindow]                  $Script:TheCanvasWindow      = $null
 [CanvasType]                    $Script:TheCanvasType        = [CanvasType]::None
+[Double]                        $Script:CurrentTime          = 0.0
+[Double]                        $Script:DeltaTime            = 0.0
+[Double]                        $Script:PreviousTime         = [DateTime]::Now.Ticks / 1e7
 [ConsoleColor24]                $Script:PaintbrushColor      = [ConsoleColor24]@{
     Red   = 255
     Green = 5
